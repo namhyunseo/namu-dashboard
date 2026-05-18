@@ -56,7 +56,7 @@
 
       const meta = document.createElement("span");
       meta.className = isReady ? "route-meta" : "route-meta pending";
-      meta.textContent = isReady ? "이동" : item.status || "준비 중";
+      meta.textContent = item.status || (isReady ? "이동" : "준비 중");
 
       link.append(text, meta);
       links.append(link);

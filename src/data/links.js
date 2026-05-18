@@ -35,9 +35,9 @@ window.NAMU_LINK_GROUPS = [
       {
         title: "Design Preview",
         label: "디자인 시안",
-        description: "클라이언트에게 공유하는 디자인 프리뷰",
-        url: "#",
-        status: "준비 중",
+        description: "프로젝트별 디자인 시안 목록",
+        url: "./designs/",
+        status: "목록 보기",
       },
       {
         title: "Client Share",

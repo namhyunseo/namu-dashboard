@@ -1,0 +1,32 @@
+window.NAMU_DESIGN_PROJECTS = [
+  {
+    id: "sample-landing",
+    title: "프로젝트명 입력",
+    client: "클라이언트명",
+    status: "검토 중",
+    updatedAt: "2026-05-18",
+    description: "랜딩 페이지 1차 디자인 시안",
+    url: "#",
+    note: "Figma, PDF, 이미지 링크를 연결할 수 있습니다.",
+  },
+  {
+    id: "sample-service",
+    title: "서비스 웹사이트",
+    client: "공유 대상",
+    status: "준비 중",
+    updatedAt: "2026-05-18",
+    description: "웹사이트 메인 화면과 주요 플로우 시안",
+    url: "#",
+    note: "실제 프로젝트가 생기면 이 항목을 교체하세요.",
+  },
+  {
+    id: "sample-archive",
+    title: "보관된 시안",
+    client: "Archive",
+    status: "보관",
+    updatedAt: "2026-05-18",
+    description: "완료되었거나 참고용으로 남겨둔 디자인 시안",
+    url: "#",
+    note: "완료 프로젝트도 삭제하지 않고 보관할 수 있습니다.",
+  },
+];

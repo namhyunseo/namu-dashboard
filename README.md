@@ -11,12 +11,16 @@ Live site: https://namhyunseo.github.io/namu-dashboard/
 ├── index.html
 ├── src
 │   ├── data
+│   │   ├── designs.js
 │   │   └── links.js
 │   ├── scripts
+│   │   ├── designs.js
 │   │   └── app.js
 │   └── styles
 │       ├── base.css
 │       └── layout.css
+├── designs
+│   └── index.html
 ├── .nojekyll
 ├── .gitignore
 └── README.md
@@ -37,6 +41,24 @@ Live site: https://namhyunseo.github.io/namu-dashboard/
 ```
 
 `url`이 `"#"`이면 버튼은 준비 중 상태로 표시됩니다. 실제 주소를 넣으면 새 탭으로 이동합니다.
+
+## Update Design Previews
+
+프로젝트별 디자인 시안은 `src/data/designs.js`에서 관리합니다.
+
+```js
+{
+  title: "프로젝트명",
+  client: "클라이언트명",
+  status: "검토 중",
+  updatedAt: "2026-05-18",
+  description: "시안 설명",
+  url: "https://figma.com/...",
+  note: "공유 범위나 버전 메모"
+}
+```
+
+`url`이 `"#"`이면 링크 준비 중 상태로 표시됩니다.
 
 ## GitHub Pages
 
