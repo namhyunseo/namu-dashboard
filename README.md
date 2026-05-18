@@ -2,6 +2,8 @@
 
 개인 블로그, 포트폴리오, 개발 프로젝트, 디자인 시안, 클라이언트 공유 페이지로 이동하는 정적 링크 허브입니다.
 
+Live site: https://namhyunseo.github.io/namu-dashboard/
+
 ## Folder Structure
 
 ```text
