@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="블로그, 포트폴리오, 개발 프로젝트, 디자인 시안으로 이동하는 개인 메인 허브입니다."
+    />
+    <title>Namu Dashboard</title>
+    <link rel="stylesheet" href="./src/styles/base.css" />
+    <link rel="stylesheet" href="./src/styles/layout.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Personal Route Hub</p>
+        <h1 id="page-title">Namu Dashboard</h1>
+        <p class="intro-copy">
+          블로그, 포트폴리오, 개발 프로젝트, 디자인 시안과 기타 작업물로 이동하는
+          메인 허브입니다.
+        </p>
+      </section>
+
+      <section class="route-panel" aria-label="주요 이동 경로">
+        <div id="route-list" class="route-list"></div>
+      </section>
+    </main>
+
+    <script src="./src/data/links.js"></script>
+    <script src="./src/scripts/app.js"></script>
+  </body>
+</html>
