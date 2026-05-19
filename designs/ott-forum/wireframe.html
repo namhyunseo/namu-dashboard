@@ -810,6 +810,149 @@ body {
   line-height: 1.6;
 }
 .mob-footer a { color: var(--mid); }
+
+/* ─── Mobile Additional ──────────────────── */
+.mob-breadcrumb {
+  padding: 8px 16px;
+  font-size: 11px;
+  color: var(--mid);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mob-breadcrumb a { color: var(--mid); text-decoration: none; }
+.mob-breadcrumb .sep { color: var(--border); }
+.mob-page-hd {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.mob-page-hd h2 { font-size: 18px; font-weight: 700; }
+.mob-page-hd p { font-size: 12px; color: var(--mid); margin-top: 3px; }
+.mob-toolbar {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mob-search {
+  display: flex;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 100%;
+}
+.mob-search input {
+  flex: 1;
+  padding: 7px 10px;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--dark);
+}
+.mob-search button {
+  padding: 7px 12px;
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  font-size: 11px;
+  font-family: inherit;
+}
+.mob-board-list { border-top: 2px solid var(--dark); }
+.mob-board-row {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.mob-board-pin { background: #f0f3f7; }
+.mob-board-meta { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+.mob-board-title { font-size: 13px; color: var(--dark); line-height: 1.4; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mob-board-date { font-size: 11px; color: var(--mid); }
+.mob-post-hd { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); }
+.mob-post-hd h3 { font-size: 15px; font-weight: 700; line-height: 1.45; margin: 7px 0 10px; }
+.mob-post-meta { font-size: 11px; color: var(--mid); display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.mob-post-body { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.mob-info-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.mob-info-row { display: flex; gap: 8px; padding: 3px 0; }
+.mob-info-label { color: var(--mid); width: 40px; flex-shrink: 0; }
+.mob-attach { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.mob-attach-ttl { font-size: 10px; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.mob-attach-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+.mob-attach-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mob-post-nav { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+.mob-nav-row { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.mob-nav-row:last-child { border: none; }
+.mob-nav-dir { font-size: 10px; font-weight: 700; color: var(--mid); width: 44px; flex-shrink: 0; }
+.mob-nav-title { flex: 1; color: var(--dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mob-form-wrap {
+  padding: 24px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.mob-form-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 20px 20px;
+}
+.mob-form-box h2 { font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.mob-form-sub { font-size: 12px; color: var(--mid); text-align: center; margin-bottom: 20px; }
+.mob-form-group { margin-bottom: 13px; }
+.mob-form-label { display: block; font-size: 10px; font-weight: 700; color: var(--mid); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .3px; }
+.mob-form-input { width: 100%; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 3px; font-size: 13px; font-family: inherit; color: var(--dark); background: #fff; outline: none; }
+.mob-form-input::placeholder { color: var(--border); }
+.mob-form-hint { font-size: 11px; color: var(--mid); margin-top: 3px; }
+.mob-form-check { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
+.mob-form-check input[type="checkbox"] { width: 14px; height: 14px; margin-top: 2px; flex-shrink: 0; accent-color: var(--dark); }
+.mob-form-check label { font-size: 11px; color: var(--mid); line-height: 1.5; }
+.mob-form-links { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
+.mob-form-links a { font-size: 11px; color: var(--mid); text-decoration: none; }
+.mob-lock-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 20px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.mob-member-menu { border-top: 2px solid var(--dark); }
+.mob-member-item {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mob-member-item.on { font-weight: 600; background: var(--bg); }
+.mob-member-item.dim { color: var(--mid); }
+.mob-doc-list { border-top: 2px solid var(--dark); }
+.mob-doc-row { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.mob-pg { display: flex; align-items: center; justify-content: center; gap: 3px; padding: 16px; }
+.mob-pg-btn { min-width: 28px; height: 28px; padding: 0 6px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 2px; font-size: 12px; color: var(--mid); background: #fff; font-family: inherit; }
+.mob-pg-btn.on { background: var(--dark); color: #fff; border-color: var(--dark); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -829,6 +972,13 @@ body {
   <a href="#s08">08 회원가입</a>
   <a href="#s09">09 회원 공간</a>
   <a href="#s10">10 모바일 메인</a>
+  <a href="#s11">11 모바일 공지 목록</a>
+  <a href="#s12">12 모바일 공지 상세</a>
+  <a href="#s13">13 모바일 세미나 목록</a>
+  <a href="#s14">14 모바일 세미나 상세</a>
+  <a href="#s15">15 모바일 로그인</a>
+  <a href="#s16">16 모바일 회원가입</a>
+  <a href="#s17">17 모바일 회원 공간</a>
 </nav>
 
 
@@ -1937,6 +2087,596 @@ body {
     </div>
   </div>
 </div>
+
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 11 · 모바일 공지사항 목록 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s11">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-02</span>
+    <span class="title">모바일 — 공지사항 목록</span>
+    <span class="note">375px · 필터 칩 · 목록 리스트 · 페이지네이션</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>공지사항
+        </div>
+
+        <div class="mob-page-hd">
+          <h2>공지사항</h2>
+          <p>포럼의 주요 공지 및 활동 소식을 안내합니다.</p>
+        </div>
+
+        <div class="mob-toolbar">
+          <button class="filter-chip on">전체</button>
+          <button class="filter-chip">공지</button>
+          <button class="filter-chip">일반</button>
+        </div>
+        <div class="mob-toolbar" style="border-top:none;padding-top:0;">
+          <div class="mob-search">
+            <input type="text" placeholder="검색어 입력">
+            <button>검색</button>
+          </div>
+        </div>
+
+        <div class="mob-board-list">
+          <div class="mob-board-row mob-board-pin">
+            <div class="mob-board-meta"><span class="badge badge-dark">공지</span></div>
+            <div class="mob-board-title">[중요] 2025년 포럼 운영 방향 안내</div>
+            <div class="mob-board-date">2025.04.15 · 조회 1,204</div>
+          </div>
+          <div class="mob-board-row mob-board-pin">
+            <div class="mob-board-meta"><span class="badge badge-dark">공지</span></div>
+            <div class="mob-board-title">6월 정기 세미나 참가 신청 안내</div>
+            <div class="mob-board-date">2025.03.28 · 조회 876</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta"><span class="badge">일반</span></div>
+            <div class="mob-board-title">4월 세미나 발표자료 등록 완료</div>
+            <div class="mob-board-date">2025.04.20 · 조회 321</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta"><span class="badge">일반</span></div>
+            <div class="mob-board-title">뉴스레터 제7호 발행 안내</div>
+            <div class="mob-board-date">2025.04.10 · 조회 218</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta"><span class="badge">일반</span></div>
+            <div class="mob-board-title">포럼 창립 기념 심포지엄 결과 보고</div>
+            <div class="mob-board-date">2025.03.15 · 조회 490</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta"><span class="badge">일반</span></div>
+            <div class="mob-board-title">2025년 상반기 회원 모집 공고</div>
+            <div class="mob-board-date">2025.02.25 · 조회 634</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta"><span class="badge">일반</span></div>
+            <div class="mob-board-title">홈페이지 개편 안내 — [공지 제목 예시]</div>
+            <div class="mob-board-date">2025.01.20 · 조회 412</div>
+          </div>
+        </div>
+
+        <div class="mob-pg">
+          <button class="mob-pg-btn">‹</button>
+          <button class="mob-pg-btn on">1</button>
+          <button class="mob-pg-btn">2</button>
+          <button class="mob-pg-btn">3</button>
+          <button class="mob-pg-btn">›</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 12 · 모바일 공지사항 상세 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s12">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-03</span>
+    <span class="title">모바일 — 공지사항 상세</span>
+    <span class="note">375px · 제목 · 본문 · 첨부파일 · 이전/다음글</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>
+          <a href="#">공지사항</a><span class="sep">›</span>상세보기
+        </div>
+
+        <div class="mob-post-hd">
+          <span class="badge badge-dark">공지</span>
+          <h3>[2025 정기 세미나 개최 안내 — 공지 제목이 이 위치에 표시됩니다]</h3>
+          <div class="mob-post-meta">
+            <span>2025.04.15</span>
+            <span>작성자: 관리자</span>
+            <span>조회 1,204</span>
+          </div>
+        </div>
+
+        <div class="mob-post-body">
+          <div class="ph-lines" style="margin-bottom:14px;">
+            <div class="ph-line f"></div>
+            <div class="ph-line m"></div>
+            <div class="ph-line f"></div>
+            <div class="ph-line s"></div>
+          </div>
+          <div class="ph-img" style="height:120px;margin:12px 0;width:100%;">[이미지 플레이스홀더]</div>
+          <div class="ph-lines">
+            <div class="ph-line f"></div>
+            <div class="ph-line m"></div>
+            <div class="ph-line xs"></div>
+          </div>
+        </div>
+
+        <div class="mob-attach">
+          <div class="mob-attach-ttl">첨부파일</div>
+          <div class="mob-attach-item">
+            <div class="attach-icon">PDF</div>
+            <span class="mob-attach-name">[첨부파일명_2025세미나안내].pdf</span>
+            <span class="muted" style="font-size:11px;flex-shrink:0;">2.4 MB</span>
+          </div>
+          <div class="mob-attach-item">
+            <div class="attach-icon">HWP</div>
+            <span class="mob-attach-name">[첨부파일명_신청서양식].hwp</span>
+            <span class="muted" style="font-size:11px;flex-shrink:0;">184 KB</span>
+          </div>
+        </div>
+
+        <div class="mob-post-nav">
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▲ 이전글</span>
+            <span class="mob-nav-title">[이전 공지 제목 예시]</span>
+          </div>
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▼ 다음글</span>
+            <span class="mob-nav-title">[다음 공지 제목 예시]</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px;text-align:center;">
+          <button class="btn btn-outline btn-sm" style="width:100%;">목록으로</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 13 · 모바일 세미나 목록 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s13">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-04</span>
+    <span class="title">모바일 — 세미나 목록</span>
+    <span class="note">375px · 연도 선택 · 유형 필터 칩 · 카드 세로 나열</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>세미나
+        </div>
+
+        <div class="mob-page-hd">
+          <h2>세미나</h2>
+          <p>OTT포럼에서 개최한 세미나 및 발표 자료를 열람할 수 있습니다.</p>
+        </div>
+
+        <div class="mob-toolbar">
+          <select class="filter-select" style="font-size:12px;padding:5px 24px 5px 8px;">
+            <option>전체 연도</option>
+            <option>2025</option>
+            <option>2024</option>
+            <option>2023</option>
+          </select>
+        </div>
+        <div class="mob-toolbar" style="border-top:none;padding-top:0;gap:6px;">
+          <button class="filter-chip on" style="font-size:11px;padding:4px 10px;">전체</button>
+          <button class="filter-chip" style="font-size:11px;padding:4px 10px;">정기 세미나</button>
+          <button class="filter-chip" style="font-size:11px;padding:4px 10px;">특별 세미나</button>
+          <button class="filter-chip" style="font-size:11px;padding:4px 10px;">워크숍</button>
+        </div>
+        <div class="mob-toolbar" style="border-top:none;padding-top:0;">
+          <div class="mob-search">
+            <input type="text" placeholder="세미나 검색">
+            <button>검색</button>
+          </div>
+        </div>
+
+        <div class="mob-section" style="border-bottom:none;">
+          <div style="font-size:11px;color:var(--mid);margin-bottom:12px;">총 24건</div>
+          <div class="mob-card">
+            <div class="mob-card-img">[세미나 이미지]</div>
+            <div class="mob-card-body">
+              <div class="mob-card-title">[세미나 제목 — 두 줄 분량의 제목 텍스트]</div>
+              <div class="mob-card-meta">2025.04.12 · 정기 세미나 · [발표자명]</div>
+            </div>
+          </div>
+          <div class="mob-card">
+            <div class="mob-card-img">[세미나 이미지]</div>
+            <div class="mob-card-body">
+              <div class="mob-card-title">[세미나 제목 — 두 줄 분량의 제목 텍스트]</div>
+              <div class="mob-card-meta">2025.02.18 · 특별 세미나 · [발표자명]</div>
+            </div>
+          </div>
+          <div class="mob-card">
+            <div class="mob-card-img">[세미나 이미지]</div>
+            <div class="mob-card-body">
+              <div class="mob-card-title">[세미나 제목 — 두 줄 분량의 제목 텍스트]</div>
+              <div class="mob-card-meta">2024.12.10 · 정기 세미나 · [발표자명]</div>
+            </div>
+          </div>
+          <div class="mob-card">
+            <div class="mob-card-img">[세미나 이미지]</div>
+            <div class="mob-card-body">
+              <div class="mob-card-title">[세미나 제목 — 두 줄 분량의 제목 텍스트]</div>
+              <div class="mob-card-meta">2024.10.22 · 워크숍 · [발표자명]</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-pg">
+          <button class="mob-pg-btn">‹</button>
+          <button class="mob-pg-btn on">1</button>
+          <button class="mob-pg-btn">2</button>
+          <button class="mob-pg-btn">3</button>
+          <button class="mob-pg-btn">›</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 14 · 모바일 세미나 상세 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s14">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-05</span>
+    <span class="title">모바일 — 세미나 상세</span>
+    <span class="note">375px · 요약 정보박스 · 본문 · 발표자료 다운로드</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>
+          <a href="#">세미나</a><span class="sep">›</span>상세보기
+        </div>
+
+        <div class="mob-post-hd">
+          <span class="badge badge-dark">정기 세미나</span>
+          <h3>[세미나 제목 — 두 줄 분량의 긴 제목이 이 위치에 표시됩니다]</h3>
+          <div class="mob-post-meta">
+            <span>2025.04.12</span>
+            <span>발표자: [발표자명]</span>
+            <span>조회 847</span>
+          </div>
+        </div>
+
+        <div class="mob-post-body">
+          <div class="mob-info-box">
+            <div class="mob-info-row"><span class="mob-info-label">일시</span>[날짜 및 시간]</div>
+            <div class="mob-info-row"><span class="mob-info-label">장소</span>[장소명 또는 온라인]</div>
+            <div class="mob-info-row"><span class="mob-info-label">발표자</span>[발표자명]</div>
+            <div class="mob-info-row"><span class="mob-info-label">유형</span>[세미나 유형]</div>
+          </div>
+          <div class="ph-lines" style="margin-bottom:12px;">
+            <div class="ph-line f"></div>
+            <div class="ph-line m"></div>
+            <div class="ph-line f"></div>
+            <div class="ph-line s"></div>
+          </div>
+          <div class="ph-img" style="height:110px;margin:12px 0;width:100%;">[발표 자료 슬라이드 썸네일]</div>
+          <div class="ph-lines">
+            <div class="ph-line f"></div>
+            <div class="ph-line m"></div>
+            <div class="ph-line xs"></div>
+          </div>
+        </div>
+
+        <div class="mob-attach">
+          <div class="mob-attach-ttl">발표 자료 다운로드</div>
+          <div class="mob-attach-item">
+            <div class="attach-icon">PDF</div>
+            <span class="mob-attach-name">[세미나발표자료_20250412].pdf</span>
+            <span class="muted" style="font-size:11px;flex-shrink:0;">8.7 MB</span>
+          </div>
+          <div class="mob-attach-item">
+            <div class="attach-icon">PPT</div>
+            <span class="mob-attach-name">[세미나발표자료_20250412].pptx</span>
+            <span class="muted" style="font-size:11px;flex-shrink:0;">14.2 MB</span>
+          </div>
+        </div>
+
+        <div class="mob-post-nav">
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▲ 이전글</span>
+            <span class="mob-nav-title">[이전 세미나 제목 예시]</span>
+          </div>
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▼ 다음글</span>
+            <span class="mob-nav-title muted">다음 게시글이 없습니다.</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px;text-align:center;">
+          <button class="btn btn-outline btn-sm" style="width:100%;">목록으로</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 15 · 모바일 로그인 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s15">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-07</span>
+    <span class="title">모바일 — 로그인</span>
+    <span class="note">375px · 이메일 + 비밀번호 · 비밀번호 찾기 · 회원가입 링크</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-form-wrap">
+          <div class="mob-form-box">
+            <h2>로그인</h2>
+            <p class="mob-form-sub">[포럼명] 회원 전용 서비스입니다.</p>
+
+            <div class="mob-form-group">
+              <label class="mob-form-label">이메일</label>
+              <input type="email" class="mob-form-input" placeholder="example@email.com">
+            </div>
+            <div class="mob-form-group">
+              <label class="mob-form-label">비밀번호</label>
+              <input type="password" class="mob-form-input" placeholder="비밀번호를 입력하세요">
+            </div>
+
+            <button class="btn btn-solid" style="width:100%;padding:11px;margin-top:4px;font-size:13px;">로그인</button>
+
+            <div class="mob-form-links">
+              <a href="#">비밀번호 찾기</a>
+              <a href="#">회원가입</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 16 · 모바일 회원가입 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s16">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-08</span>
+    <span class="title">모바일 — 회원가입</span>
+    <span class="note">375px · 입력 폼 · 약관 동의 · 가입 버튼</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-form-wrap">
+          <div class="mob-form-box">
+            <h2>회원가입</h2>
+            <p class="mob-form-sub">가입 후 회원 전용 자료를 열람하실 수 있습니다.</p>
+
+            <div class="mob-form-group">
+              <label class="mob-form-label">이메일 <span style="color:#b05050;">*</span></label>
+              <input type="email" class="mob-form-input" placeholder="example@email.com">
+            </div>
+            <div class="mob-form-group">
+              <label class="mob-form-label">비밀번호 <span style="color:#b05050;">*</span></label>
+              <input type="password" class="mob-form-input" placeholder="8자 이상 입력">
+              <p class="mob-form-hint">영문, 숫자를 포함하여 8자 이상 입력하세요.</p>
+            </div>
+            <div class="mob-form-group">
+              <label class="mob-form-label">비밀번호 확인 <span style="color:#b05050;">*</span></label>
+              <input type="password" class="mob-form-input" placeholder="비밀번호를 한 번 더 입력">
+            </div>
+            <div class="mob-form-group">
+              <label class="mob-form-label">이름 <span style="color:var(--mid);font-size:10px;font-weight:400;">(선택)</span></label>
+              <input type="text" class="mob-form-input" placeholder="이름 입력">
+            </div>
+
+            <div class="mob-form-check">
+              <input type="checkbox" id="m-agree">
+              <label for="m-agree"><a href="#" style="color:var(--dark);text-decoration:underline;">개인정보 처리방침</a>에 동의합니다. (필수)</label>
+            </div>
+
+            <button class="btn btn-solid" style="width:100%;padding:11px;font-size:13px;">가입하기</button>
+
+            <div class="mob-form-links">
+              <a href="#">이미 회원이신가요? 로그인</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 17 · 모바일 회원 공간 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s17">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-09</span>
+    <span class="title">모바일 — 회원 공간</span>
+    <span class="note">375px · 상단: 비로그인 차단 · 하단: 로그인 후 메뉴 + 자료 목록</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>회원 공간
+        </div>
+
+        <!-- State A: 비로그인 -->
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:8px 16px;font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+          상태 A — 로그인 전
+        </div>
+        <div class="mob-lock-pane">
+          <div class="lock-box" style="width:48px;height:48px;font-size:16px;margin-bottom:14px;">LOCK</div>
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;">회원 전용 공간입니다</h3>
+          <p style="font-size:12px;color:var(--mid);margin-bottom:16px;line-height:1.6;">이 페이지는 로그인한 회원만<br>열람하실 수 있습니다.</p>
+          <a href="#" class="btn btn-solid btn-sm" style="width:80%;">로그인하기</a>
+          <div style="margin-top:10px;">
+            <a href="#" style="font-size:11px;color:var(--mid);text-decoration:none;">아직 회원이 아니신가요? <u>회원가입</u></a>
+          </div>
+        </div>
+
+        <!-- State B: 로그인 후 -->
+        <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:8px 16px;font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#8ab58a;display:inline-block;"></span>
+          상태 B — 로그인 후
+        </div>
+
+        <!-- 사이드바 메뉴 → 모바일에서는 세로 목록 -->
+        <div class="mob-member-menu">
+          <div class="mob-member-item on">
+            회원 전용 자료
+            <span style="color:var(--dark);font-size:12px;">›</span>
+          </div>
+          <div class="mob-member-item">
+            내 정보 수정
+            <span style="color:var(--mid);font-size:12px;">›</span>
+          </div>
+          <div class="mob-member-item">
+            비밀번호 변경
+            <span style="color:var(--mid);font-size:12px;">›</span>
+          </div>
+          <div class="mob-member-item dim">
+            로그아웃
+          </div>
+        </div>
+
+        <!-- 회원 전용 자료 목록 -->
+        <div style="padding:14px 16px 6px;border-bottom:1px solid var(--border);">
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:4px;">회원 전용 자료</h4>
+          <p style="font-size:11px;color:var(--mid);">회원만 열람 가능한 자료입니다.</p>
+        </div>
+        <div class="mob-doc-list">
+          <div class="mob-doc-row">
+            <span class="file-type">PDF</span>
+            <span style="flex:1;">[회원 전용 자료명 — 예시]</span>
+            <button class="dl-btn" style="font-size:11px;padding:3px 9px;">↓</button>
+          </div>
+          <div class="mob-doc-row">
+            <span class="file-type">PPT</span>
+            <span style="flex:1;">[회원 전용 자료명 — 예시]</span>
+            <button class="dl-btn" style="font-size:11px;padding:3px 9px;">↓</button>
+          </div>
+          <div class="mob-doc-row">
+            <span class="file-type">PDF</span>
+            <span style="flex:1;">[회원 전용 자료명 — 예시]</span>
+            <button class="dl-btn" style="font-size:11px;padding:3px 9px;">↓</button>
+          </div>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div style="height:56px;"></div>
 
