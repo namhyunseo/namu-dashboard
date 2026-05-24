@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 기획자를 위한 PWA(누진형 웹 앱) 가이드</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.06);
+            
+            --primary: #3b82f6; /* Ocean Blue */
+            --primary-light: #eff6ff;
+            --accent: #10b981; /* Emerald */
+            --accent-light: #d1fae5;
+            --rose: #f43f5e;
+            --rose-light: #ffe4e6;
+            
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            --font-display: 'Outfit', 'Noto Sans KR', sans-serif;
+            --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 10px 30px rgba(59, 130, 246, 0.03), 0 1px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.02) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-bottom: 5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1.25rem;
+            background: var(--primary-light);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+            letter-spacing: 0.03em;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* ---------------- WELCOME SECTION ---------------- */
+        .welcome-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .welcome-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ---------------- SECTION CARDS ---------------- */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ---------------- PWA ADVANTAGES ---------------- */
+        .grid-benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-benefits {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .benefit-card {
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .benefit-card:hover {
+            background: #ffffff;
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.03);
+        }
+
+        .benefit-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .benefit-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ---------------- PWA CONFIG FOR PLANNERS ---------------- */
+        .config-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .config-item {
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .config-badge {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .config-title {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .config-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .config-action {
+            background: #ffffff;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+
+        /* ---------------- SIMULATOR AREA ---------------- */
+        .simulator-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .simulator-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .simulator-text {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sim-btn {
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: var(--font-display);
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+            align-self: flex-start;
+        }
+
+        .sim-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        /* Phone mockup */
+        .phone-mockup {
+            width: 280px;
+            height: 520px;
+            background: #000;
+            border-radius: 36px;
+            border: 12px solid #000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f1f5f9;
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        /* Phone Header */
+        .phone-header {
+            height: 32px;
+            background: rgba(255,255,255,0.8);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            z-index: 10;
+        }
+
+        /* App Icon State */
+        .phone-homescreen {
+            flex: 1;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 0.75rem;
+            background: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
+            position: relative;
+        }
+
+        .app-icon-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: var(--transition);
+        }
+
+        .app-icon-slot.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .app-name {
+            font-size: 0.55rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-top: 0.25rem;
+        }
+
+        /* Browser Mockup State */
+        .browser-mock {
+            position: absolute;
+            top: 32px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 32px);
+            background: white;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .browser-bar {
+            height: 38px;
+            background: #f1f5f9;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .browser-address {
+            flex: 1;
+            height: 24px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 6px;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            padding-left: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .browser-content {
+            flex: 1;
+            background: #fff;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Standalone App Mockup State */
+        .app-standalone {
+            position: absolute;
+            top: 32px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 32px);
+            background: white;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .app-standalone.open {
+            transform: translateY(0);
+        }
+
+        .app-navbar {
+            height: 44px;
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-family: var(--font-display);
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        .app-standalone-content {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <span class="badge">기획 파트 협업용 가이드</span>
+            <h1>기획자를 위한 PWA(누진형 웹 앱) 입문</h1>
+            <p class="subtitle">네이티브 앱의 이점과 웹의 배포 속도를 결합하여 여행 서비스를 고도화하는 방법</p>
+        </header>
+
+        <!-- PWA 정의 요약 -->
+        <div class="welcome-box">
+            <h3 class="welcome-title">PWA(Progressive Web App)란?</h3>
+            <p class="welcome-text">
+                사용자가 앱스토어(Google Play/App Store)에 가지 않고도, <strong>모바일 인터넷 브라우저 상에서 즉시 설치하여 일반 네이티브 앱처럼 사용할 수 있게 만드는 웹 기술</strong>입니다. 
+                 Next.js 기반 단일 코드빌드로 안드로이드와 iOS 사용자 모두에게 동일한 앱 경험을 제공할 수 있습니다.
+            </p>
+        </div>
+
+        <!-- 3대 비즈니스 강점 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">💡</span>
+                기획 관점에서의 PWA 도입 효과
+            </h2>
+            
+            <div class="grid-benefits">
+                <div class="benefit-card">
+                    <div class="benefit-icon">💸</div>
+                    <h4 class="benefit-name">비용 및 기간 최소화</h4>
+                    <p class="benefit-desc">
+                        iOS와 안드로이드 개별 앱을 추가 개발할 필요가 없어 리소스가 극도로 절감되며, 앱스토어의 깐깐한 심사 대기 및 반려 없이 즉각 패치 배포가 가능합니다.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">📲</div>
+                    <h4 class="benefit-name">장벽 없는 설치 (설치 촉진)</h4>
+                    <p class="benefit-desc">
+                        인터넷 브라우저에서 '홈 화면에 추가' 배너 클릭 한 번으로 설치가 완료되므로, 사용자가 앱을 다운로드하기 위해 마주하는 허들이 아예 제거됩니다.
+                    </p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚙️</div>
+                    <h4 class="benefit-name">네이티브 기능 지원</h4>
+                    <p class="benefit-desc">
+                        모바일 홈 화면 아이콘 생성, 첫 로딩 스플래시 화면, 주소창 제거(Standalone), 오프라인 캐싱 및 푸시 알림 연동 기능을 온전히 지원합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 기획자가 PRD에 정의해야 할 핵심 구성요소 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">📋</span>
+                기획서(PRD) 작성 시 포함해야 할 PWA 요건
+            </h2>
+            
+            <div class="config-list">
+                <!-- Config 1 -->
+                <div class="config-item">
+                    <div class="config-header">
+                        <span class="config-title">1. 앱 매니페스트 (Web Manifest) 디자인 요건</span>
+                        <span class="config-badge">Manifest</span>
+                    </div>
+                    <p class="config-desc">
+                        사용자가 설치했을 때 홈 화면에 뜰 아이콘 규격과 모킹 디바이스의 브랜딩 요소를 기획 사양에 명시해야 합니다.
+                    </p>
+                    <div class="config-action">
+                        <strong>✍️ 기획자 역할:</strong> 앱 이름(App Name), 홈화면 로고 아이콘 이미지(512x512px), 브랜드 테마 컬러(HEX), 스플래시(Splash) 화면 로고 디자인 정의.
+                    </div>
+                </div>
+
+                <!-- Config 2 -->
+                <div class="config-item">
+                    <div class="config-header">
+                        <span class="config-title">2. 오프라인 여행 모드 UX 요건 (Service Worker Caching)</span>
+                        <span class="config-badge">Service Worker</span>
+                    </div>
+                    <p class="config-desc">
+                        백그라운드에서 동적 자원을 가로채는 스크립트를 통해, 강원도 삼척 해변이나 산간 지역 등 <strong>네트워크 상태가 불량하거나 끊긴 오프라인 환경에서도 핵심 일정표가 정상 작동</strong>할 수 있도록 자원을 미리 저장해 둡니다.
+                    </p>
+                    <div class="config-action">
+                        <strong>✍️ 기획자 역할:</strong> "인터넷이 연결되어 있지 않습니다"라는 경고창 대신, 오프라인 시에도 조회 가능한 <strong>'오프라인 전용 일정표 및 비상 연락처 화면'</strong>의 대체 UX 기획.
+                    </div>
+                </div>
+
+                <!-- Config 3 -->
+                <div class="config-item">
+                    <div class="config-header">
+                        <span class="config-title">3. Standalone 독립 실행 모드 정의</span>
+                        <span class="config-badge">Standalone UX</span>
+                    </div>
+                    <p class="config-desc">
+                        인터넷 브라우저의 상단 검색 주소창과 하단 뒤로가기 툴바를 완전히 숨기고, 상단 상태바 디자인 영역까지 앱 컬러로 통일하여 네이티브 앱과 동일한 크기의 화면을 보장합니다.
+                    </p>
+                    <div class="config-action">
+                        <strong>✍️ 기획자 역할:</strong> 브라우저 자체 '뒤로가기' 버튼이 없어지므로, 모바일 화면 레이아웃 최상단에 **사용자가 언제든 이탈/뒤로 갈 수 있는 명시적인 네비게이션 헤더 및 버튼**을 기획에 필수 설계해야 함.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 실시간 PWA 설치 시뮬레이터 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">📱</span>
+                PWA 모바일 작동 시뮬레이터
+            </h2>
+            
+            <div class="simulator-layout">
+                <div class="simulator-text">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        브라우저 상에서 웹사이트를 서핑하던 도중, 하단의 PWA 설치 버튼을 눌렀을 때 앱이 모바일 단말기 홈화면에 추가되고 **Standalone(독립앱) 모드로 브라우저 주소창 없이 실행되는 과정**을 우측 가상 단말기로 직접 확인해 보세요.
+                    </p>
+                    <button class="sim-btn" id="btnInstall" onclick="runSim()">PWA 앱 설치 시뮬레이션 ▶</button>
+                    <button class="sim-btn" id="btnReset" onclick="resetSim()" style="background: var(--text-muted); display: none;">시뮬레이터 초기화 🔄</button>
+                </div>
+
+                <!-- Mobile Mockup -->
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-header" id="status-bar">AM 10:45 • LTE</div>
+                        
+                        <!-- Screen 1: Browser view before Install -->
+                        <div class="browser-mock" id="browserMock">
+                            <div class="browser-bar">
+                                <div style="display: flex; gap: 3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block;"></span></div>
+                                <div class="browser-address">https://avatrip.co.kr/group_join</div>
+                            </div>
+                            <div class="browser-content">
+                                <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">✈️</span>
+                                <h5 style="font-size: 0.85rem; margin-bottom: 0.25rem;">아바트립 (AVA-Trip)</h5>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 1rem;">모바일 웹 브라우저 접속 중</p>
+                                <div style="font-size: 0.6rem; background: var(--primary-light); color: var(--primary); padding: 0.4rem; border-radius: 6px; border: 1px dashed var(--primary); font-weight: bold;">
+                                    상단 버튼을 눌러 PWA로 홈 화면에 앱을 추가하세요.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Screen 2: Homescreen with Apps -->
+                        <div class="phone-homescreen">
+                            <div class="app-icon-slot" id="appIconSlot" onclick="openApp()">
+                                <div class="app-icon">✈️</div>
+                                <div class="app-name">아바트립</div>
+                            </div>
+                        </div>
+
+                        <!-- Screen 3: Standalone App open -->
+                        <div class="app-standalone" id="appStandalone">
+                            <div class="app-navbar">✈️ AVA-Trip (PWA)</div>
+                            <div class="app-standalone-content">
+                                <span style="font-size: 2rem; margin-bottom: 0.5rem; filter: drop-shadow(0 4px 10px rgba(59,130,246,0.25));">🏖️</span>
+                                <h5 style="font-size: 0.95rem; margin-bottom: 0.25rem; color: var(--primary);">삼척 여행 파트너</h5>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.5; padding: 0 0.5rem;">
+                                    주소창이 완전히 숨겨지고, 네이티브 단독 화면(Standalone) 형태로 구동된 실체입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Concurrency -->
+    <script>
+        const browserMock = document.getElementById('browserMock');
+        const appIconSlot = document.getElementById('appIconSlot');
+        const appStandalone = document.getElementById('appStandalone');
+        
+        const btnInstall = document.getElementById('btnInstall');
+        const btnReset = document.getElementById('btnReset');
+
+        function runSim() {
+            btnInstall.disabled = true;
+            
+            // 1. Fadeout browser view (install animation)
+            browserMock.style.opacity = '0';
+            browserMock.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                browserMock.style.display = 'none';
+                
+                // 2. Add app icon to home screen
+                appIconSlot.classList.add('show');
+                
+                setTimeout(() => {
+                    // 3. Auto click and launch app
+                    openApp();
+                    
+                    btnReset.style.display = 'inline-block';
+                }, 1200);
+            }, 500);
+        }
+
+        function openApp() {
+            appStandalone.classList.add('open');
+        }
+
+        function resetSim() {
+            appStandalone.classList.remove('open');
+            appIconSlot.classList.remove('show');
+            
+            setTimeout(() => {
+                browserMock.style.display = 'flex';
+                setTimeout(() => {
+                    browserMock.style.opacity = '1';
+                    browserMock.style.transform = 'scale(1)';
+                }, 100);
+                
+                btnInstall.disabled = false;
+                btnReset.style.display = 'none';
+            }, 400);
+        }
+    </script>
+</body>
+</html>

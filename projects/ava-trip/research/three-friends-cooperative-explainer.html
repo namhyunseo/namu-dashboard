@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3인 협업 여행 에이전트 시스템: 취향 합의 프로세스</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #070a13;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --border-color: rgba(255, 255, 255, 0.06);
+            
+            /* Friend Profiles Colors */
+            --friend-a: #3b82f6; /* Min-su (Blue) */
+            --friend-a-glow: rgba(59, 130, 246, 0.2);
+            --friend-b: #ec4899; /* Seo-yeon (Pink) */
+            --friend-b-glow: rgba(236, 72, 153, 0.2);
+            --friend-c: #10b981; /* Jun-ho (Emerald) */
+            --friend-c-glow: rgba(16, 185, 129, 0.2);
+            
+            --harness: #a855f7; /* Harness (Purple) */
+            --harness-glow: rgba(168, 85, 247, 0.2);
+            --rose: #ef4444;
+            --amber: #f59e0b;
+            
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --font-display: 'Outfit', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+            
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 5% 10%, rgba(59, 130, 246, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 95% 20%, rgba(236, 72, 153, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-bottom: 5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--friend-c);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        /* Friends Profile Grid */
+        .friends-deck {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .friends-deck {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .friend-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.75rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .friend-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .friend-card.card-a::before { background: var(--friend-a); }
+        .friend-card.card-b::before { background: var(--friend-b); }
+        .friend-card.card-c::before { background: var(--friend-c); }
+
+        .friend-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .friend-card.card-a:hover { box-shadow: 0 10px 25px var(--friend-a-glow); }
+        .friend-card.card-b:hover { box-shadow: 0 10px 25px var(--friend-b-glow); }
+        .friend-card.card-c:hover { box-shadow: 0 10px 25px var(--friend-c-glow); }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-a .avatar { background: var(--friend-a-glow); border-color: var(--friend-a); }
+        .card-b .avatar { background: var(--friend-b-glow); border-color: var(--friend-b); }
+        .card-c .avatar { background: var(--friend-c-glow); border-color: var(--friend-c); }
+
+        .friend-name {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .friend-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .friend-pref {
+            font-size: 0.85rem;
+            color: rgba(241, 245, 249, 0.85);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            text-align: left;
+            min-height: 85px;
+        }
+
+        /* Flow Visualizer Box */
+        .pipeline-container {
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .pipeline-nav {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 0.4rem;
+            margin-bottom: 2.5rem;
+            gap: 0.5rem;
+        }
+
+        .nav-step {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 0.5rem;
+            border-radius: 10px;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .nav-step:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .nav-step.active {
+            background: var(--harness);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--harness-glow);
+        }
+
+        /* Stage content wrappers */
+        .stage-box {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+            min-height: 380px;
+        }
+
+        .stage-box.show {
+            display: block;
+        }
+
+        .stage-title {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stage-title-icon {
+            font-size: 1.6rem;
+        }
+
+        .stage-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            border-left: 2px solid var(--harness);
+            padding-left: 0.75rem;
+        }
+
+        /* Visual components per stage */
+        /* STAGE 1: LOAD PERSONA */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .db-flow {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .db-cylinder {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+        }
+
+        .flow-line-pulse {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--harness), transparent);
+            width: 100%;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-line-pulse::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: laser 1.5s infinite linear;
+        }
+
+        /* STAGE 2: NEGOTIATION CHAT */
+        .chat-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            height: 280px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-bubble {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 85%;
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        .chat-bubble.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .chat-content-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.65rem 0.9rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+        }
+
+        .chat-bubble.a .chat-avatar { background: var(--friend-a-glow); border: 1px solid var(--friend-a); color: var(--friend-a); }
+        .chat-bubble.b .chat-avatar { background: var(--friend-b-glow); border: 1px solid var(--friend-b); color: var(--friend-b); }
+        .chat-bubble.c .chat-avatar { background: var(--friend-c-glow); border: 1px solid var(--friend-c); color: var(--friend-c); }
+
+        .chat-author {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+        }
+
+        .chat-bubble.a .chat-content-box { border-left: 2px solid var(--friend-a); }
+        .chat-bubble.b .chat-content-box { border-left: 2px solid var(--friend-b); }
+        .chat-bubble.c .chat-content-box { border-left: 2px solid var(--friend-c); }
+
+        /* STAGE 3: HARNESS COMPILER */
+        .harness-dashboard {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .harness-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .draft-sheet {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+        }
+
+        .draft-header {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--amber);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .draft-item {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .draft-item.error {
+            border-color: var(--rose);
+            background: rgba(239, 68, 68, 0.03);
+        }
+
+        .harness-linter-panel {
+            background: rgba(168, 85, 247, 0.02);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .linter-badge {
+            display: inline-flex;
+            align-self: flex-start;
+            padding: 0.25rem 0.6rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--rose);
+            color: var(--rose);
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .linter-error-box {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #fca5a5;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        /* STAGE 4: SELF CORRECTION */
+        .correction-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .correction-board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .correction-arrow-box {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .feedback-bubble {
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px solid var(--harness);
+            border-radius: 16px;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .feedback-bubble::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            width: 16px;
+            height: 16px;
+            background: rgba(10, 15, 30, 0.8);
+            border-right: 1px solid var(--harness);
+            border-top: 1px solid var(--harness);
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .feedback-bubble::after {
+                display: none;
+            }
+        }
+
+        .agent-reply-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .reply-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        /* STAGE 5: FINAL OUTPUT */
+        .final-showcase {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .itinerary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--friend-c);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 440px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .itinerary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .itinerary-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--friend-c);
+        }
+
+        .meta-tag {
+            font-size: 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--friend-c);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: var(--friend-c);
+            font-weight: bold;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-step {
+            display: flex;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 24px;
+            bottom: -15px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .timeline-node {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid var(--friend-c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--friend-c);
+            z-index: 2;
+        }
+
+        .timeline-content {
+            padding-top: 0.1rem;
+        }
+
+        .timeline-time {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--friend-c);
+            text-transform: uppercase;
+        }
+
+        .timeline-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 0.1rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        .itinerary-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        /* Buttons Panel at Bottom */
+        .bottom-nav-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--harness), #b87ef7);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .btn-next:hover:not(:disabled) {
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35);
+            filter: brightness(1.1);
+        }
+
+        /* Keyframes */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes laser {
+            0% { left: -50%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <span class="badge">아바트립 다중 협상 시각화</span>
+            <h1>3인 친구의 실제 조율 파이프라인</h1>
+            <p class="subtitle">민수, 서연, 준호가 각자 취향을 입력했을 때, 백엔드 시스템 내부에서 설계-검색-검증이 일어나는 전체 시퀀스</p>
+        </header>
+
+        <!-- 3인의 프로필 정보 -->
+        <div class="friends-deck">
+            
+            <!-- Friend A -->
+            <div class="friend-card card-a">
+                <div class="avatar">👨‍💻</div>
+                <h3 class="friend-name">민수</h3>
+                <p class="friend-role">🏄‍♂️ 액티비티 매니아</p>
+                <p class="friend-pref">"여행에 서핑이나 격렬한 해양 레포츠가 없으면 안 돼! 바다 액티비티 무조건 포함! 예산은 상관없어."</p>
+            </div>
+
+            <!-- Friend B -->
+            <div class="friend-card card-b">
+                <div class="avatar">👩‍🎨</div>
+                <h3 class="friend-name">서연</h3>
+                <p class="friend-role">☕ 감성 힐러</p>
+                <p class="friend-pref">"사람 바글거리는 건 질색이야. 피톤치드 가득하고 조용한 숲속 감성 카페 선호. 그리고 1일 예산 10만원 이하 준수."</p>
+            </div>
+
+            <!-- Friend C -->
+            <div class="friend-card card-c">
+                <div class="avatar">🧑‍🍳</div>
+                <h3 class="friend-name">준호</h3>
+                <p class="friend-role">🦀 식도락가</p>
+                <p class="friend-pref">"여행지는 무조건 먹는 재미지! 동해에서 제일 유명한 로컬 게 요리 맛집 필수. 너무 먼 이동 거리는 싫어."</p>
+            </div>
+
+        </div>
+
+        <!-- 메인 파이프라인 상자 -->
+        <div class="pipeline-container">
+            
+            <!-- 네비게이션 탭 -->
+            <div class="pipeline-nav" id="pipelineNav">
+                <button class="nav-step active" data-stage="1">1단계: 취향 로드 (RAG)</button>
+                <button class="nav-step" data-stage="2">2단계: 에이전트 협상</button>
+                <button class="nav-step" data-stage="3">3단계: Harness 검증</button>
+                <button class="nav-step" data-stage="4">4단계: 자가 교정</button>
+                <button class="nav-step" data-stage="5">5단계: 일정 확정</button>
+            </div>
+
+            <!-- 1단계: 취향 로드 (RAG) -->
+            <div class="stage-box show" id="stage1">
+                <h2 class="stage-title">
+                    <span class="stage-title-icon">💾</span> 1단계: PostgreSQL DB에서 개인 취향 데이터 로딩 (RAG)
+                </h2>
+                <p class="stage-desc">사용자 3명이 일정 만들기 버튼을 누르면, 백엔드 서버는 DB에서 취향 파일과 과거 만족도 이력을 조회해 메모리로 로드합니다.</p>
+                
+                <div class="persona-grid">
+                    <div class="db-flow" style="border-color: var(--friend-a);">
+                        <div class="avatar">👨‍💻</div>
+                        <div class="friend-name" style="color: var(--friend-a);">민수 에이전트</div>
+                        <div class="flow-line-pulse"></div>
+                        <div class="db-cylinder">💾</div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">성향 로드: 레포츠 100%</span>
+                    </div>
+
+                    <div class="db-flow" style="border-color: var(--friend-b);">
+                        <div class="avatar">👩‍🎨</div>
+                        <div class="friend-name" style="color: var(--friend-b);">서연 에이전트</div>
+                        <div class="flow-line-pulse"></div>
+                        <div class="db-cylinder">💾</div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">성향 로드: 카페 100%, 10만 한도</span>
+                    </div>
+
+                    <div class="db-flow" style="border-color: var(--friend-c);">
+                        <div class="avatar">🧑‍🍳</div>
+                        <div class="friend-name" style="color: var(--friend-c);">준호 에이전트</div>
+                        <div class="flow-line-pulse"></div>
+                        <div class="db-cylinder">💾</div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">성향 로드: 게요리 100%, 단거리</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2단계: 에이전트 가상 협상 -->
+            <div class="stage-box" id="stage2">
+                <h2 class="stage-title">
+                    <span class="stage-title-icon">💬</span> 2단계: 3인 에이전트 가상 대화 및 1차 타협안 도출
+                </h2>
+                <p class="stage-desc">세 명의 아바타를 연기하는 LLM이 로드된 취향을 가방에 넣고 가상의 라운드 테이블 토론을 진행해 절충 설계도(초안)를 만듭니다.</p>
+                
+                <div class="chat-container">
+                    <div class="chat-bubble a">
+                        <div class="chat-avatar">민</div>
+                        <div class="chat-content-box">
+                            <div class="chat-author">민수 에이전트</div>
+                            삼척 갈남해변 서핑이 최고입니다. 무조건 13:00부터 3시간 타는 서핑 패키지를 박아넣읍시다!
+                        </div>
+                    </div>
+                    <div class="chat-bubble b">
+                        <div class="chat-avatar">서</div>
+                        <div class="chat-content-box">
+                            <div class="chat-author">서연 에이전트</div>
+                            서핑 좋아요. 하지만 끝난 다음에는 쉬어야 해요. 삼척 솔밭에 있는 조용한 숲길 감성 카페(편도 75km 거리)로 이동합시다! 그리고 예산이 아껴져야 해요.
+                        </div>
+                    </div>
+                    <div class="chat-bubble c">
+                        <div class="chat-avatar">준</div>
+                        <div class="chat-content-box">
+                            <div class="chat-author">준호 에이전트</div>
+                            삼척에 게 요리로 가장 유명한 명품 대게 하우스(식비 90,000원)에서 저녁을 먹죠. 이동 거리가 짧아서 완벽할 것 같아요!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3단계: Harness 검증 -->
+            <div class="stage-box" id="stage3">
+                <h2 class="stage-title">
+                    <span class="stage-title-icon">🛡️</span> 3단계: Harness Linter 개입 및 물리적 제약조건 스캔
+                </h2>
+                <p class="stage-desc">에이전트들이 합의한 '서핑(삼척) ➡️ 숲속 카페(강릉) ➡️ 대게집(삼척)' 설계도가 하네스 검증대에 오릅니다. 하네스는 자비 없이 에러를 탐지합니다.</p>
+                
+                <div class="harness-dashboard">
+                    <div class="draft-sheet">
+                        <div class="draft-header">
+                            <span>합의 초안 구성표</span>
+                            <span>상태</span>
+                        </div>
+                        <div class="draft-item">
+                            <span>① 삼척 갈남해변 서핑 (비용 50,000원)</span>
+                            <span style="color: var(--friend-c);">PASS</span>
+                        </div>
+                        <div class="draft-item error">
+                            <span>② 강릉 숲길 카페로 이동 (이동거리 75km 위반!)</span>
+                            <span style="color: var(--rose); font-weight: bold;">LINTER FAIL</span>
+                        </div>
+                        <div class="draft-item error">
+                            <span>③ 삼척 대게 요리 식사 (총합 160,000원 위반!)</span>
+                            <span style="color: var(--rose); font-weight: bold;">LINTER FAIL</span>
+                        </div>
+                    </div>
+
+                    <div class="harness-linter-panel">
+                        <span class="linter-badge">Linter Error Detected</span>
+                        <div class="linter-error-box">
+                            [ERROR_01]: 강릉 카페는 삼척 서핑 해변에서 75km 떨어져 있으며, 편도 운전 시간이 1.5시간 소요됩니다. 1일 가용 이동한도(50km)를 초과했습니다.<br><br>
+                            [ERROR_02]: 서핑(50,000원) + 대게식사(90,000원) + 카페(10,000원) = 1인당 150,000원으로, 서연의 예산 한도(100,000원)를 50,000원 초과했습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4단계: 자가 교정 -->
+            <div class="stage-box" id="stage4">
+                <h2 class="stage-title">
+                    <span class="stage-title-icon">🔄</span> 4단계: Harness의 피드백 통지와 에이전트 자가 교정(Self-Correction)
+                </h2>
+                <p class="stage-desc">하네스가 에러 보고서를 던지자 에이전트들이 즉시 깨달음을 얻고(In-Context Learning), 현실적인 양보를 시작합니다.</p>
+                
+                <div class="correction-board">
+                    <div class="feedback-bubble">
+                        <span style="font-weight: bold; color: var(--harness);">🛡️ Harness Feedback</span>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top:0.4rem; line-height: 1.5;">
+                            "이동거리 한계를 위해 카페를 삼척 해변 주변(5km 이내)으로 바꾸세요. 예산 한도를 초과했으니 대게 요리 대신 인당 30,000원 이하의 가성비 식사로 일정을 대체하세요."
+                        </p>
+                    </div>
+
+                    <div class="agent-reply-box">
+                        <div class="reply-item">
+                            <span style="color: var(--friend-b);">👩‍🎨 서연:</span>
+                            <span>"삼척 서핑해변 바로 앞 바다뷰 조용한 카페(거리 2km, 인당 6,000원)로 타협하겠습니다!"</span>
+                        </div>
+                        <div class="reply-item">
+                            <span style="color: var(--friend-c);">🧑‍🍳 준호:</span>
+                            <span>"대게 코스요리 대신, 삼척 현지인들이 극찬하는 모듬 생선구이 정식(인당 20,000원)으로 대체합시다. 맛도 좋고 저렴합니다."</span>
+                        </div>
+                        <div class="reply-item">
+                            <span style="color: var(--friend-a);">🏄‍♂️ 민수:</span>
+                            <span>"완벽합니다! 이 동선이라면 운전 시간도 15분으로 단축되고 예산도 인당 76,000원으로 통과됩니다!"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5단계: 최종 일정 확정 -->
+            <div class="stage-box" id="stage5">
+                <h2 class="stage-title">
+                    <span class="stage-title-icon">✨</span> 5단계: 100% 무결점 및 취향 충족 최종 일정표 확정
+                </h2>
+                <p class="stage-desc">하네스의 재스캔 결과 모든 오류가 통과(ALL GREEN)되어, 3명의 우정과 현실적인 물리 여건이 모두 타협된 완벽한 일정표가 모바일 화면에 스트리밍됩니다.</p>
+                
+                <div class="final-showcase">
+                    <div class="itinerary-card">
+                        <div class="itinerary-header">
+                            <span class="itinerary-title">🏖️ 삼척 바다 & 감성 힐링 1일 코스</span>
+                            <span class="meta-tag">100% 실행가능</span>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-step">
+                                <div class="timeline-node">1</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">13:00 • 갈남해수욕장</div>
+                                    <div class="timeline-name">갈남항 해양 레포츠 & 서핑</div>
+                                    <div class="timeline-desc">민수의 취향 (서핑 비용 50,000원)</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-step">
+                                <div class="timeline-node">2</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">16:30 • 삼척 바다빛 힐링 카페</div>
+                                    <div class="timeline-name">조용한 에메랄드빛 해변 전망 차 타임</div>
+                                    <div class="timeline-desc">서연의 취향 (이동거리 2km, 비용 6,000원)</div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-step">
+                                <div class="timeline-node">3</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-time">18:00 • 삼척 로컬 대게회무침 식당</div>
+                                    <div class="timeline-name">삼척 현지인 모듬 생선구이 정식</div>
+                                    <div class="timeline-desc">준호의 취향 (이동거리 4km, 비용 20,000원)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="itinerary-footer">
+                            <span>1인당 최종 경비</span>
+                            <span style="font-family: var(--font-display); font-weight: bold; font-size:1.1rem; color: var(--friend-c);">76,000원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단 조절 버튼 목록 -->
+            <div class="bottom-nav-box">
+                <button class="btn-action" id="btnPrev" disabled>◀ 이전 단계</button>
+                <button class="btn-action btn-next" id="btnNext">다음 단계 ▶</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Interactive script mapping for tabs -->
+    <script>
+        let currentStage = 1;
+        const totalStages = 5;
+
+        const navSteps = document.querySelectorAll('.nav-step');
+        const stageBoxes = document.querySelectorAll('.stage-box');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+
+        function updateStage(stageNum) {
+            currentStage = stageNum;
+
+            // Update Tabs
+            navSteps.forEach(btn => {
+                const s = parseInt(btn.getAttribute('data-stage'));
+                if (s === currentStage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update Stage Contents
+            stageBoxes.forEach(box => {
+                const s = parseInt(box.id.replace('stage', ''));
+                if (s === currentStage) {
+                    box.classList.add('show');
+                } else {
+                    box.classList.remove('show');
+                }
+            });
+
+            // Update button states
+            btnPrev.disabled = currentStage === 1;
+            
+            if (currentStage === totalStages) {
+                btnNext.textContent = '처음부터 다시 보기 🔄';
+                btnNext.classList.remove('btn-next');
+                btnNext.style.background = 'rgba(255, 255, 255, 0.05)';
+                btnNext.style.border = '1px solid var(--border-color)';
+                btnNext.style.boxShadow = 'none';
+            } else {
+                btnNext.textContent = '다음 단계 ▶';
+                btnNext.classList.add('btn-next');
+                btnNext.style.background = '';
+                btnNext.style.border = '';
+                btnNext.style.boxShadow = '';
+            }
+        }
+
+        // Navigation tab click handler
+        navSteps.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const s = parseInt(btn.getAttribute('data-stage'));
+                updateStage(s);
+            });
+        });
+
+        // Prev Button click
+        btnPrev.addEventListener('click', () => {
+            if (currentStage > 1) {
+                updateStage(currentStage - 1);
+            }
+        });
+
+        // Next Button click
+        btnNext.addEventListener('click', () => {
+            if (currentStage < totalStages) {
+                updateStage(currentStage + 1);
+            } else {
+                updateStage(1);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☁️ AWS Lightsail 배포 인프라 스펙</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@600;800&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.06);
+            
+            --primary: #ec7211; /* AWS Orange */
+            --primary-light: #fef3c7;
+            --secondary: #0ea5e9; /* Ocean Blue */
+            --secondary-light: #e0f2fe;
+            --accent: #10b981;
+            --harness: #a855f7;
+            --rose: #f43f5e;
+            --rose-light: #ffe4e6;
+            
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            --font-display: 'Outfit', 'Noto Sans KR', sans-serif;
+            --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+            
+            --shadow: 0 10px 30px rgba(236, 114, 17, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            padding-bottom: 5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .aws-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1.25rem;
+            background: var(--primary-light);
+            border: 1px solid rgba(236, 114, 17, 0.3);
+            border-radius: 9999px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            gap: 0.4rem;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* ---------------- SPECS GRID ---------------- */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .spec-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .spec-card.railway {
+            border-top-color: var(--secondary);
+        }
+
+        .spec-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .spec-value {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .spec-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* ---------------- INFRA MAP ---------------- */
+        .map-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+            padding-left: 0.5rem;
+        }
+
+        .section-title.railway {
+            border-left-color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .map-container {
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .map-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .map-row {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .map-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .map-node {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.85rem;
+            text-align: center;
+            min-width: 180px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+        }
+
+        .map-node.vps {
+            border: 1.5px solid rgba(236, 114, 17, 0.25);
+            background: rgba(236, 114, 17, 0.01);
+        }
+
+        .map-node-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .map-node-name {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .map-node-tech {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .map-arrow {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .vps-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: bold;
+            padding: 0.05rem 0.3rem;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 0.2rem;
+        }
+
+        /* ---------------- COMPARISON TABLE ---------------- */
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-top: 1rem;
+        }
+
+        .comp-table th, .comp-table td {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .comp-table th {
+            background: #fafafa;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comp-table td {
+            border-bottom: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .comp-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <div class="aws-badge">☁️ Amazon Web Services (AWS)</div>
+            <h1>아바트립 배포 인프라 스펙</h1>
+            <p class="subtitle">AWS Lightsail 단일 인스턴스 기반 1차 MVP 배포 스펙</p>
+        </header>
+
+        <!-- 1. 핵심 스펙 정보 -->
+        <div class="specs-grid">
+            <div class="spec-card">
+                <div class="spec-title">인스턴스 스펙</div>
+                <div class="spec-value">AWS Lightsail VPS</div>
+                <div class="spec-subtext">Ubuntu 22.04 LTS (2GB RAM / 1 vCPU / 60GB SSD)</div>
+            </div>
+            
+            <div class="spec-card">
+                <div class="spec-title">예상 고정 비용</div>
+                <div class="spec-value">월 $10.00</div>
+                <div class="spec-subtext">약 13,000원 (종량 과금 없이 예산 상한 방어)</div>
+            </div>
+        </div>
+
+        <!-- 2. 인프라 매핑 개념도 -->
+        <div class="map-section">
+            <div class="section-title">AWS Lightsail + Docker Compose 매핑 구조</div>
+            
+            <div class="map-container">
+                <!-- Row 1: Frontend & Entry -->
+                <div class="map-row">
+                    <!-- Client -->
+                    <div class="map-node">
+                        <div class="map-node-icon">📱</div>
+                        <div class="map-node-name">모바일 화면</div>
+                        <div class="map-node-tech">Next.js PWA (Vercel 무료)</div>
+                    </div>
+
+                    <div class="map-arrow">➡️</div>
+
+                    <!-- API Gate -->
+                    <div class="map-node vps">
+                        <span class="vps-badge">AWS Lightsail</span>
+                        <div class="map-node-icon">🚪</div>
+                        <div class="map-node-name">안내 데스크</div>
+                        <div class="map-node-tech">FastAPI (비동기)</div>
+                    </div>
+                </div>
+
+                <!-- Linker -->
+                <div class="map-arrow" style="transform: rotate(90deg); margin: -0.4rem 0;">➡️</div>
+
+                <!-- Row 2: In-VPS components -->
+                <div class="map-row">
+                    <!-- Redis -->
+                    <div class="map-node vps">
+                        <span class="vps-badge">AWS Lightsail</span>
+                        <div class="map-node-icon">⚡</div>
+                        <div class="map-node-name">고속 메모장</div>
+                        <div class="map-node-tech">Redis Queue / Cache</div>
+                    </div>
+
+                    <div class="map-arrow">➡️</div>
+
+                    <!-- Celery -->
+                    <div class="map-node vps">
+                        <span class="vps-badge">AWS Lightsail</span>
+                        <div class="map-node-icon">🤖</div>
+                        <div class="map-node-name">일하는 AI 로봇</div>
+                        <div class="map-node-tech">Celery (LangGraph 워커)</div>
+                    </div>
+
+                    <div class="map-arrow">➡️</div>
+
+                    <!-- PostgreSQL -->
+                    <div class="map-node vps">
+                        <span class="vps-badge">AWS Lightsail</span>
+                        <div class="map-node-icon">💾</div>
+                        <div class="map-node-name">지리/성향 금고</div>
+                        <div class="map-node-tech">PostgreSQL + PostGIS DB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 대안 분석: Railway.app 비교 -->
+        <div class="specs-grid" style="grid-template-columns: 1fr; margin-top: 3rem; margin-bottom: 0;">
+            <div style="background: none; box-shadow: none; border: none; padding: 0;">
+                <div class="section-title railway">대안 비교: Railway.app (클라우드 관리형)</div>
+            </div>
+        </div>
+
+        <div class="specs-grid">
+            <div class="spec-card railway">
+                <div class="spec-title">인프라 스펙</div>
+                <div class="spec-value">Railway.app PaaS</div>
+                <div class="spec-subtext">완전 자동 배포 (GitHub 소스 감지 빌드 / Zero-Ops)</div>
+            </div>
+            
+            <div class="spec-card railway">
+                <div class="spec-title">예상 가변 비용</div>
+                <div class="spec-value">월 $15 ~ $25+</div>
+                <div class="spec-subtext">종량제 과금 구조 (에이전트 24시간 가동 시 비용 누적)</div>
+            </div>
+        </div>
+
+        <!-- 1:1 핵심 대비 표 -->
+        <table class="comp-table">
+            <thead>
+                <tr>
+                    <th>평가 항목</th>
+                    <th style="color: var(--primary);">🐳 1안: AWS Lightsail + Docker</th>
+                    <th style="color: var(--secondary);">🎭 2안: Railway.app PaaS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>설정 공수 (개발)</strong></td>
+                    <td>높음 (수동 리눅스 및 컨테이너 세팅)</td>
+                    <td><strong>매우 낮음 (GitHub 연동 원터치 빌드)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>비용 안정성 (예산)</strong></td>
+                    <td><strong>월 $10 고정 (상한 방어)</strong></td>
+                    <td>월 $15 ~ $25+ 가변 (사용 시간비례 종량제)</td>
+                </tr>
+                <tr>
+                    <td><strong>내부 통신 속도</strong></td>
+                    <td><strong>극도로 빠름 (0ms 로컬 통신)</strong></td>
+                    <td>보통 (데이터센터 분산 시 네트워크 지연 발생)</td>
+                </tr>
+                <tr>
+                    <td><strong>서버 중단 리스크</strong></td>
+                    <td><strong>없음 (24시간 무중단 가동)</strong></td>
+                    <td>주의 (무료 할당 크레딧 소진 시 즉시 중단)</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>

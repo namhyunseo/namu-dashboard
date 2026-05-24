@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Lightsail 중심 배포, 운영 환경, 서버 구성 원칙을 정리한 문서입니다." />
+    <title>인프라 및 서버 배포 명세 | AVA-Trip</title>
+    <link rel="stylesheet" href="../assets/share.css" />
+  </head>
+  <body>
+    <main class="doc-shell">
+      <nav class="top-nav" aria-label="페이지 이동">
+        <a href="../">자료 목록</a>
+      </nav>
+      <article class="doc-article">
+        <header class="doc-header">
+          <p class="eyebrow">AVA-Trip Document</p>
+          <h1>인프라 및 서버 배포 명세</h1>
+          <p>Lightsail 중심 배포, 운영 환경, 서버 구성 원칙을 정리한 문서입니다.</p>
+          <span class="source-path">source: 01_Planning/Infrastructure_Specification.md</span>
+        </header>
+        <div class="markdown-body">
+<h1 id="아바트립-ava-trip-aws-lightsail-기반-인프라-배포-명세서-infrastructure-setup-specification">🌐 아바트립 (AVA-Trip) AWS Lightsail 기반 인프라 배포 명세서 (Infrastructure Setup Specification)</h1>
+<p>본 문서는 아바트립(AVA-Trip) 서비스의 최종 확정된 배포 인프라인 <strong>Option 1 (AWS Lightsail 단일 VPS + Docker Compose)</strong>의 정밀 구축 명세서입니다. 2GB의 타이트한 서버 자원에서 PostgreSQL/PostGIS, Redis, Celery, FastAPI를 무중단으로 안정적으로 구동하기 위한 OS 커널 최적화 및 컨테이너 오케스트레이션 설정을 기술합니다.</p>
+<hr>
+<h2 id="1-배포-아키텍처-개요">🏗️ 1. 배포 아키텍처 개요</h2>
+<ul>
+<li><strong>프론트엔드 호스팅 (Next.js PWA)</strong>: <strong>Vercel</strong> (Free Tier - Global CDN 및 HTTPS 자동 구성)</li>
+<li><strong>백엔드 API 및 에이전트 엔진 (VPS)</strong>: <strong>AWS Lightsail</strong> (Ubuntu 22.04 LTS 기반 단일 가상 컴퓨터)</li>
+<li><strong>리버스 프록시 및 SSL</strong>: <strong>Caddy Server</strong> (Let's Encrypt를 통한 HTTPS 인증서 갱신 자동화)</li>
+<li><strong>데이터베이스</strong>: <strong>PostgreSQL v15 + PostGIS v3.3</strong> (Docker 내부 로컬 볼륨 바인딩)</li>
+</ul>
+<hr>
+<h2 id="2-aws-lightsail-인스턴스-사양-및-방화벽-설정">🖥️ 2. AWS Lightsail 인스턴스 사양 및 방화벽 설정</h2>
+<h3 id="2-1-하드웨어-사양">2-1. 하드웨어 사양</h3>
+<ul>
+<li><strong>운영체제 (OS)</strong>: Ubuntu 22.04 LTS (Minimal 권장)</li>
+<li><strong>하드웨어 티어</strong>: RAM 2GB, vCPU 1, SSD 60GB (월 $10 고정 사양)</li>
+<li><strong>고정 IP (Static IP)</strong>: 인스턴스 생성 직후 Lightsail 콘솔에서 <strong>Static IP를 반드시 생성 및 바인딩</strong>하여 재부팅 시 IP 변경을 방지합니다.</li>
+</ul>
+<h3 id="2-2-네트워크-포트-개방-규칙-lightsail-및-ufw-설정">2-2. 네트워크 포트 개방 규칙 (Lightsail 및 UFW 설정)</h3>
+<p>외부 및 프론트엔드 서비스와의 정상 통신을 위해 최소한의 포트만 외부에 노출합니다.</p>
+<div class="table-wrap"><table><thead><tr><th>포트 번호</th><th>프로토콜</th><th>노출 대상</th><th>서비스명</th><th>목적</th></tr></thead><tbody><tr><td><strong>22</strong></td><td>TCP</td><td>개발자 IP (또는 All)</td><td>SSH</td><td>가상 서버 원격 터미널 접속 및 제어</td></tr><tr><td><strong>80</strong></td><td>TCP</td><td>All (0.0.0.0/0)</td><td>HTTP</td><td>Caddy 리다이렉트 처리용</td></tr><tr><td><strong>443</strong></td><td>TCP</td><td>All (0.0.0.0/0)</td><td>HTTPS</td><td>프론트엔드 Next.js 통신 및 PWA 보안 요구사항 충족</td></tr></tbody></table></div>
+<hr>
+<h2 id="3-os-메모리-최적화-swap-memory-설정">💾 3. OS 메모리 최적화 (Swap Memory 설정)</h2>
+<p>2GB RAM 환경에서 PostgreSQL, Redis, FastAPI, Celery 에이전트 워커를 동시에 띄우면 부하 발생 시 커널 OOM(Out of Memory) Killer에 의해 프로세스가 강제 강등/종료됩니다. 이를 방지하기 위해 <strong>반드시 2GB의 가상 스왑 메모리를 구성</strong>합니다.</p>
+<pre><code class="language-bash"># 1. 2GB 크기의 빈 스왑 파일 생성
+sudo fallocate -l 2G /swapfile
+
+# 2. 파일 권한 설정 (소유자 읽기/쓰기만 허용)
+sudo chmod 600 /swapfile
+
+# 3. 스왑 영역으로 포맷팅
+sudo mkswap /swapfile
+
+# 4. 스왑 파일 활성화
+sudo swapon /swapfile
+
+# 5. 영구 등록을 위해 /etc/fstab 파일 맨 아래에 추가
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+# 6. 활성화 정상 여부 검증 (Mem/Swap 항목 확인)
+free -m</code></pre>
+<hr>
+<h2 id="4-docker-및-docker-compose-신속-설치">🐳 4. Docker 및 Docker Compose 신속 설치</h2>
+<p>Ubuntu 22.04 서버에 Docker 엔진을 가장 가볍고 안전하게 수동 설치하는 커맨드 시퀀스입니다.</p>
+<pre><code class="language-bash"># 패키지 업데이트 및 필수 도구 설치
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+# Docker 공식 GPG 키 추가
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# APT 저장소 등록
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+# Docker 엔진 및 Compose 플러그인 설치
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# docker 명령어 sudo 없이 실행 가능하도록 유저 그룹 추가 (선택)
+sudo usermod -aG docker $USER</code></pre>
+<hr>
+<h2 id="5-docker-compose-통합-배포-명세-docker-compose-yml">📦 5. Docker Compose 통합 배포 명세 (<code>docker-compose.yml</code>)</h2>
+<p>아바트립 백엔드 전체를 구동하기 위한 통합 <code>docker-compose.yml</code> 구조입니다. 데이터 무결성 보존을 위해 PostgreSQL과 Redis의 볼륨 마운트를 지정합니다.</p>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  # 1. 지리 공간 데이터베이스 (PostgreSQL + PostGIS)
+  db:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: avatrip-db
+    restart: always
+    environment:
+      POSTGRES_USER: avatrip_admin
+      POSTGRES_PASSWORD: avatrip_secure_password_123  # 실배포 시 변경 필수
+      POSTGRES_DB: avatrip
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avatrip_admin -d avatrip"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. 메시지 브로커 &amp; 세션 저장소 (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: avatrip-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+
+  # 3. FastAPI 비동기 API 게이트웨이
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: avatrip-web
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgresql://avatrip_admin:avatrip_secure_password_123@db:5432/avatrip
+      - REDIS_URL=redis://redis:6379/0
+      - GEMINI_API_KEY=your_gemini_api_key_here  # Google GenAI SDK 연동용 키
+    ports:
+      - "8000:8000"
+
+  # 4. Celery 비동기 워커 (LangGraph 엔진 탑재)
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: avatrip-worker
+    restart: always
+    command: celery -A main.celery_app worker --loglevel=info -c 1
+    depends_on:
+      - redis
+      - db
+    environment:
+      - DATABASE_URL=postgresql://avatrip_admin:avatrip_secure_password_123@db:5432/avatrip
+      - REDIS_URL=redis://redis:6379/0
+      - GEMINI_API_KEY=your_gemini_api_key_here
+    # 워커는 싱글코어 자원을 고려해 Concurrency(-c 1)를 1로 제한하여 메모리 폭증을 차단합니다.
+
+  # 5. Caddy Reverse Proxy (자동 SSL 인증 관리)
+  caddy:
+    image: caddy:2-alpine
+    container_name: avatrip-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:</code></pre>
+<hr>
+<h2 id="6-리버스-프록시-설정-caddyfile">🔒 6. 리버스 프록시 설정 (<code>Caddyfile</code>)</h2>
+<p>Caddy는 Nginx와 달리 별도의 Let's Encrypt 연동 스크립트(Certbot) 설정 없이도, <strong>도메인명을 적어주는 것만으로 80/443 포트 자동 매칭 및 SSL 인증서 무중단 갱신을 자체적으로 수행</strong>합니다.</p>
+<pre><code class="language-caddy"># 아래 도메인은 구매한 도메인이나 서브도메인으로 변경하여 매칭합니다.
+api.avatrip.co.kr {
+    # FastAPI 컨테이너의 8000 포트로 트래픽을 프록시 전달
+    reverse_proxy web:8000
+
+    # 보안 헤더 기본 설정
+    header {
+        # Clickjacking 방어
+        X-Frame-Options "DENY"
+        # XSS 공격 방어
+        X-XSS-Protection "1; mode=block"
+        # MIME Type 스니핑 방지
+        X-Content-Type-Options "nosniff"
+    }
+}</code></pre>
+<hr>
+<h2 id="7-배포-가동-및-유지보수-워크플로우">🚀 7. 배포 가동 및 유지보수 워크플로우</h2>
+<h3 id="7-1-서비스-가동">7-1. 서비스 가동</h3>
+<p>모든 소스코드가 서버에 복사된 후, docker-compose.yml 파일이 있는 디렉토리에서 아래 명령어로 통합 컨테이너들을 백그라운드 구동합니다.</p>
+<pre><code class="language-bash"># 백그라운드로 전체 서비스 가동 및 빌드
+docker compose up -d --build
+
+# 현재 가동 중인 컨테이너 상태 모니터링
+docker compose ps</code></pre>
+<h3 id="7-2-모니터링-및-트러블슈팅">7-2. 모니터링 및 트러블슈팅</h3>
+<pre><code class="language-bash"># 1. FastAPI 게이트웨이 API 웹 서버 로그 확인
+docker compose logs -f web
+
+# 2. LangGraph 에이전트 연산 Celery 워커 실시간 로그 모니터링 (디버깅 핵심)
+docker compose logs -f worker
+
+# 3. 데이터베이스 상태 모니터링
+docker compose logs -f db</code></pre>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

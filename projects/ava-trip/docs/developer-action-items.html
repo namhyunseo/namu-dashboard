@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="개발 진행을 위한 실무 체크리스트와 다음 작업 단위입니다." />
+    <title>개발자 액션 아이템 | AVA-Trip</title>
+    <link rel="stylesheet" href="../assets/share.css" />
+  </head>
+  <body>
+    <main class="doc-shell">
+      <nav class="top-nav" aria-label="페이지 이동">
+        <a href="../">자료 목록</a>
+      </nav>
+      <article class="doc-article">
+        <header class="doc-header">
+          <p class="eyebrow">AVA-Trip Document</p>
+          <h1>개발자 액션 아이템</h1>
+          <p>개발 진행을 위한 실무 체크리스트와 다음 작업 단위입니다.</p>
+          <span class="source-path">source: 01_Planning/Developer_Action_Items.md</span>
+        </header>
+        <div class="markdown-body">
+<h1 id="개발자-관점의-본격-개발-착수-전-액션-플랜-developer-action-items">🛠️ 개발자 관점의 본격 개발 착수 전 액션 플랜 (Developer Action Items)</h1>
+<p>본 문서는 아바트립 (AVA-Trip)의 기획 및 기능 정의서(<a href="file:///Users/namhyeonseo/devlop/tourismContest/01_Planning/Feature_List.md">Feature_List.md</a>)가 확정된 후, <strong>개발자로서 본격 코딩(구현)에 진입하기 전에 반드시 해결하고 설계해야 할 기술적 의사결정 및 실무 액션 플랜</strong>을 정리한 가이드북입니다.</p>
+<p>기획서의 추상적인 요구사항을 실질적인 코드로 바꾸기 위해 아래 <strong>6가지 핵심 액션 아이템</strong>을 차례로 실행하시는 것을 권장합니다.</p>
+<hr>
+<h2 id="핵심-액션-아이템-요약">📋 핵심 액션 아이템 요약</h2>
+<pre><code class="language-mermaid">gantt
+    title 본격 개발 착수 전 개발자 로드맵 (약 1~2주 소요)
+    dateFormat  YYYY-MM-DD
+    section 설계 &amp; 의사결정
+    [Action 1] 협상 아키텍처 확정            :active, a1, 2026-05-22, 3d
+    [Action 4] 데이터 모델링 및 스키마 설계    : a2, after a1, 3d
+    section 기술 검증 (POC)
+    [Action 2] TourAPI 호출 및 캐싱 전략 검증 : a3, 2026-05-23, 4d
+    [Action 5] 지도 &amp; 타임라인 Dnd POC      : a4, after a3, 3d
+    section 아키텍처 구축
+    [Action 3] 비동기/실시간 통신 파이프라인 셋업: a5, after a2, 4d
+    section 준비 완료
+    [Action 6] 환경 셋업 및 태스크 세분화     : a6, after a4, 2d</code></pre>
+<hr>
+<h2 id="action-1-ai-에이전트-협상-방식-확정-the-brain">🧠 Action 1. AI 에이전트 협상 방식 확정 (The Brain)</h2>
+<p>*기획서의 핵심인 "에이전트들이 사용자 대신 대리 협상한다"를 구현하기 위한 백엔드 조율 로직 결정 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: 에이전트 간 협상 프로세스의 통제 수준과 흐름을 확정합니다.</li>
+<li><strong>💡 해결해야 할 핵심 질문</strong>:</li>
+<li><strong>자유 토론형(High Freedom)</strong>: LLM 에이전트들을 하나의 그룹 채팅방에 넣어 서로 자유롭게 대화하도록 방치하고 최종 합의안을 도출할 것인가? (API 비용 높음, 탈옥/무한루프 위험성 있음, 재미 요소 높음)</li>
+<li><strong>통제된 단계별 협상(High Stability - 추천)</strong>: 백엔드 엔진이 중재자가 되어 <code>[1단계: 예산 및 숙소 등급 조율]</code> ➡️ <code>[2단계: 공통 선호 장소 1차 매칭]</code> ➡️ <code>[3단계: 취향 차이 딜(오전/오후 분배)]</code> 형태로 정형화된 프로세스를 거치며 LLM에 특정 질문만 던질 것인가? (API 비용 안정적, 결과물 예측 가능, 개발 난이도 관리 가능)</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>협상 상태 관리(State Machine) 설계</strong>:</li>
+</ol>
+<ul>
+<li><code>NegotiationSession</code> 테이블 설계: <code>status</code> (CREATING, AGENT_READY, BUDGET_NEGOTIATING, PATH_NEGOTIATING, COMPLETED, FAILED)</li>
+</ul>
+<ol>
+<li><strong>LLM 오케스트레이션 라이브러리 검토</strong>:</li>
+</ol>
+<ul>
+<li>단순 API 체이닝(직접 구현) vs <strong>LangGraph</strong>(LangChain 제공, 복잡한 상태 머신 기반 에이전트 구현 시 매우 유용) 중 프로젝트 규모에 맞는 기술 결정.</li>
+</ul>
+<hr>
+<h2 id="action-2-tourapi-호출-분석-및-캐싱-전략-the-sensory">📡 Action 2. TourAPI 호출 분석 및 캐싱 전략 (The Sensory)</h2>
+<p>*실제 여행 일정에 쓰일 공공 데이터(TourAPI 4.0)의 한계를 기술적으로 극복하는 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: TourAPI의 느린 응답 시간과 데이터 유실 문제를 방지할 파이프라인을 구성합니다.</li>
+<li><strong>💡 핵심 Pain Point</strong>:</li>
+<li>TourAPI는 실시간 호출 시 네트워크 딜레이가 심하고(1회 호출 시 1~3초 소요), 특정 시간대에 API Rate Limit에 도달하거나 먹통이 되는 경우가 빈번합니다.</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>TourAPI 연동 POC 스크립트 작성</strong> (<code>scratch/tourapi_test.py</code> 등):</li>
+</ol>
+<ul>
+<li>지역 기반 관광지 조회(AreaBasedList) 및 상세 정보(CommonInformation) API 호출 성능 및 데이터 구조 검증.</li>
+</ul>
+<ol>
+<li><strong>데이터 캐싱 레이어 도입</strong>:</li>
+</ol>
+<ul>
+<li><strong>로컬 DB(PostgreSQL/MySQL 등) 1차 저장</strong>: 공모전 출품 수준의 시연용 데이터라면, 타겟 지역(예: 제주도, 경주 등)의 핵심 관광지 데이터 수만 건을 사전에 배치(Batch)로 가져와 로컬 DB에 저장하여 사용하는 방식 적극 권장 (검색 및 공간 쿼리 속도 극대화).</li>
+</ul>
+<ol>
+<li><strong>지리 연산 및 동선 최적화 엔진 선정</strong>:</li>
+</ol>
+<ul>
+<li>이동 시간/거리 계산을 위해 외부 네비게이션 API(카카오 모빌리티, TMAP 등)를 매번 부를 것인가?</li>
+<li>대안으로 단순 직선거리 연산 또는 오픈소스 라우팅 엔진(OSRM)을 로컬에 띄워 사용할 것인가 결정.</li>
+</ul>
+<hr>
+<h2 id="action-3-비동기-큐-및-실시간-전송-the-communication">⚡ Action 3. 비동기 큐 및 실시간 전송 (The Communication)</h2>
+<p>*LLM 협상이 수십 초 동안 백그라운드에서 돌 때, 프론트엔드와 끊김 없이 소통하기 위한 아키텍처 셋업 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: 사용자가 화면을 이탈하지 않고 에이전트들이 협상하는 현황을 실시간으로 재미있게 볼 수 있게 만듭니다.</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>비동기 작업 큐(Task Queue) 도입</strong>:</li>
+</ol>
+<ul>
+<li>LLM 협상 요청이 들어오면 HTTP API는 즉시 <code>202 Accepted</code>와 <code>taskId</code>를 반환하고, 실제 협상은 백그라운드 워커(Python: <strong>Celery</strong>, Node.js: <strong>BullMQ</strong>)가 비동기로 처리하도록 구조화합니다.</li>
+</ul>
+<ol>
+<li><strong>실시간 통신 프로토콜 결정</strong>:</li>
+</ol>
+<ul>
+<li><strong>WebSockets vs Server-Sent Events (SSE)</strong>: </li>
+<li>사용자의 입력이 실시간으로 협상 도중 개입해야 하는가? (Human-in-the-Loop 필요 시 -&gt; 양방향 통신인 <strong>WebSockets</strong> 필수)</li>
+<li>서버에서 협상 진행도와 대화 로그만 실시간 스트리밍해주면 되는가? (단방향 통신인 <strong>SSE</strong>가 구현이 훨씬 간단하고 안정적)</li>
+</ul>
+<ol>
+<li><strong>실시간 모니터링 UI 데이터 구조 약속</strong>:</li>
+</ol>
+<ul>
+<li>웹소켓/SSE로 보낼 이벤트 페이로드(Payload) 포맷 사전 정의.</li>
+<li>예: <code>{"type": "negotiation_status", "step": 3, "message": "A님의 액티비티 취향과 B님의 여유 취향을 절충하는 중입니다...", "progress": 45}</code></li>
+</ul>
+<hr>
+<h2 id="action-4-페르소나-데이터-모델링-the-identity">👤 Action 4. 페르소나 데이터 모델링 (The Identity)</h2>
+<p>*사용자의 정성적인 취향을 인공지능이 완벽히 인지할 수 있는 정량적 데이터 포맷으로 모델링하는 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: DB에서 꺼낸 사용자 선호도 데이터를 LLM 프롬프트에 동적으로 바인딩하기 좋은 스펙으로 구조화합니다.</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>성향(Preference) 데이터 테이블 설계</strong>:</li>
+</ol>
+<pre><code class="language-sql">        CREATE TABLE user_persona (
+            id SERIAL PRIMARY KEY,
+            user_id INT,
+            activity_level INT, -- 1: 극도의 힐링 ~ 5: 극한의 액티비티
+            budget_range INT,    -- 일일 가용 예산
+            preferred_categories VARCHAR[], -- ['nature', 'cafe', 'museum']
+            avoid_categories VARCHAR[],     -- ['climbing', 'shopping']
+            mbti_travel_style VARCHAR(4),   -- J/P, E/I 성향 반영용
+            raw_description TEXT            -- 사용자가 직접 입력한 한 줄 요약
+        );</code></pre>
+<ol>
+<li><strong>프롬프트 템플릿(System Prompt) 초안 작성</strong>:</li>
+</ol>
+<ul>
+<li>위의 구조화된 레코드를 프롬프트에 주입하는 Python/JS 템플릿 코드 설계.</li>
+</ul>
+<hr>
+<h2 id="action-5-지도-및-인터랙션-컴포넌트-기술-검증-frontend">🗺️ Action 5. 지도 및 인터랙션 컴포넌트 기술 검증 (Frontend)</h2>
+<p>*프론트엔드 개발자가 화면을 구현하기 전에 가장 리스크가 큰 기능들을 미리 코드로 짜보는 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: 타임라인 드래그앤드롭(Dnd) 및 지도 마커 렌더링 시 발생하는 성능 및 UI 충돌을 사전에 차단합니다.</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>핵심 UI 컴포넌트 스택 선정</strong>:</li>
+</ol>
+<ul>
+<li><strong>Drag and Drop</strong>: <code>React Beautiful Dnd</code>, <code>dnd-kit</code>, 또는 HTML5 기본 Drag API 중 일정 카드의 순서 변경 및 이종 일자(1일차 ➡️ 2일차) 간 카드 이동이 매끄럽게 동작하는 라이브러리 검증.</li>
+</ul>
+<ol>
+<li><strong>지도 SDK 연동 및 렌더링 POC</strong>:</li>
+</ol>
+<ul>
+<li>카카오맵/네이버 지도 SDK를 연동하여 타임라인 마우스 호버 시 해당 마커가 하이라이트되고 지도가 부드럽게 줌인/줌아웃되는 인터랙션 로직 테스트.</li>
+</ul>
+<ol>
+<li><strong>버저닝(Undo/Redo) 상태 관리 설계</strong>:</li>
+</ol>
+<ul>
+<li>React: <code>Zustand</code>나 <code>Redux</code>에서 일정의 상태 객체(<code>ScheduleState</code>)를 깊은 복사(Deep Copy)하거나 불변 객체 어레이로 유지하여 사용자의 '이전 협상안 원복'을 지원할 상태 관리 구조 기획.</li>
+</ul>
+<hr>
+<h2 id="action-6-개발-환경-셋업-tasks-md-세분화">🚀 Action 6. 개발 환경 셋업 &amp; Tasks.md 세분화</h2>
+<p>*팀원 또는 본인이 코드를 짜기 시작할 수 있도록 캔버스를 펼치는 단계입니다.*</p>
+<ul>
+<li><strong>🎯 목표</strong>: 즉시 구현을 시작할 수 있는 파일 디렉토리 구성과 티켓 분할을 수행합니다.</li>
+<li><strong>🛠️ 구체적 액션</strong>:</li>
+</ul>
+<ol>
+<li><strong>프로젝트 레포지토리 초기화 및 모노레포/멀티레포 결정</strong>:</li>
+</ol>
+<ul>
+<li>FE(React/Next.js)와 BE(FastAPI/Express)를 한 번에 관리할 모노레포(예: <code>turborepo</code> 등)를 쓸지, 각각 독립된 레포지토리를 쓸지 확정 후 템플릿 세팅.</li>
+</ul>
+<ol>
+<li><strong><code>Tasks.md</code>에 티켓 세분화(Issue Breakdown)</strong>:</li>
+</ol>
+<ul>
+<li>대분류 수준의 태스크(<code>TourAPI 연동 모듈 개발</code>)를 소분류 수준(<code>[ ] TourAPI AreaBasedList API 연동 스크립트 작성</code>, <code>[ ] 로컬 DB 연동 및 캐싱 배치 작업 작성</code> 등)으로 잘게 쪼개어 등록합니다.</li>
+</ul>
+<hr>
+<h3 id="지금-바로-시작하기를-추천하는-첫-단추-first-action">💡 지금 바로 시작하기를 추천하는 첫 단추 (First Action)</h3>
+<p>상세 기획이 완료되는 이 시점에서 가장 좋은 시작점은 <strong>"Action 2. TourAPI 호출 분석 및 데이터 검증용 스크립트 작성"</strong>과 <strong>"Action 4. DB 테이블 초안 작성"</strong>입니다. 이 두 가지가 해결되어야 데이터를 기반으로 AI 에이전트의 프롬프트 설계(Action 1)와 프론트엔드 연동 설계(Action 3, 5)가 비로소 현실적으로 시작될 수 있기 때문입니다.</p>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

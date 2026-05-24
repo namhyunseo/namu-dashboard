@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 아바트립(AVA-Trip) 멀티 에이전트 협상 구조 기획 가이드</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.05);
+            
+            --primary: #4f46e5; /* Royal Indigo */
+            --primary-light: #e0e7ff;
+            --secondary: #0ea5e9; /* Sky Blue */
+            --secondary-light: #e0f2fe;
+            --accent: #10b981; /* Emerald Green */
+            --accent-light: #d1fae5;
+            
+            --parent-color: #6366f1; /* Parent Coordinator */
+            --child-a-color: #f43f5e; /* Min-su (Activity) */
+            --child-b-color: #f59e0b; /* Seo-yeon (Frugal) */
+            --child-c-color: #a855f7; /* Jun-ho (Cafe) */
+            --harness-color: #14b8a6; /* TravelHarness */
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            --font-display: 'Outfit', 'Noto Sans KR', sans-serif;
+            --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+            --shadow: 0 20px 40px rgba(79, 70, 229, 0.05), 0 1px 10px rgba(0, 0, 0, 0.02);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            padding-bottom: 5rem;
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(99, 102, 241, 0.03) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(14, 165, 233, 0.03) 0%, transparent 35%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        /* ---------------- HEADER ---------------- */
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.5rem;
+            background: var(--primary-light);
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ---------------- SECTION 1: ARCHITECTURE CARDS ---------------- */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .grid-roles {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.50rem;
+            margin-bottom: 3.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid-roles {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .role-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.25rem 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(79, 70, 229, 0.08);
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+        }
+
+        .role-card.parent::before { background: var(--parent-color); }
+        .role-card.child::before { background: var(--child-a-color); }
+        .role-card.harness::before { background: var(--harness-color); }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            align-self: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .role-card.parent .role-badge { background: #e0e7ff; color: var(--parent-color); }
+        .role-card.child .role-badge { background: #ffe4e6; color: var(--child-a-color); }
+        .role-card.harness .role-badge { background: #e6fffa; color: var(--harness-color); }
+
+        .role-icon {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .role-name {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+
+        .role-analogy {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .role-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ---------------- HYBRID ADVANTAGE BANNER ---------------- */
+        .advantage-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+            color: #ffffff;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .advantage-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+        }
+
+        .banner-icon {
+            font-size: 4rem;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .banner-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .banner-content p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* ---------------- SECTION 2: INTERACTIVE SIMULATOR ---------------- */
+        .simulator-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .simulator-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sim-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .sim-title-group h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .sim-title-group p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Personality Sliders */
+        .character-setting {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .character-setting::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .char-minsu::before { background: var(--child-a-color); }
+        .char-seoyeon::before { background: var(--child-b-color); }
+        .char-junho::before { background: var(--child-c-color); }
+
+        .char-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .char-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .char-pref-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .slider-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 1.1rem;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-start:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+        }
+
+        /* Simulator Screens */
+        .sim-screen {
+            border: 1px solid #f1f5f9;
+            background: #fafafa;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 520px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.01);
+        }
+
+        .screen-header {
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 0.95rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #cbd5e1;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.active {
+            background: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .screen-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .screen-body {
+            padding: 1.25rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scroll-behavior: smooth;
+        }
+
+        /* Dialogue Bubbles */
+        .bubble {
+            max-width: 85%;
+            padding: 0.9rem 1.1rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            position: relative;
+            animation: slideIn 0.35s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Coordinator (Left) */
+        .bubble.parent {
+            background: #ffffff;
+            border: 1px solid #e0e7ff;
+            align-self: flex-start;
+            border-top-left-radius: 4px;
+        }
+
+        .bubble-sender {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .bubble.parent .bubble-sender { color: var(--parent-color); }
+
+        /* Sub-agents (Right) */
+        .bubble.child-a {
+            background: #ffe4e6;
+            color: #881337;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+        .bubble.child-a .bubble-sender { color: var(--child-a-color); }
+
+        .bubble.child-b {
+            background: #fef3c7;
+            color: #78350f;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+        .bubble.child-b .bubble-sender { color: var(--child-b-color); }
+
+        .bubble.child-c {
+            background: #f3e8ff;
+            color: #581c87;
+            align-self: flex-end;
+            border-top-right-radius: 4px;
+        }
+        .bubble.child-c .bubble-sender { color: var(--child-c-color); }
+
+        /* Linter Node (Center) */
+        .bubble.harness {
+            background: #e6fffa;
+            border: 1px solid #b2f5ea;
+            color: #0c675e;
+            align-self: center;
+            text-align: center;
+            border-radius: 12px;
+            max-width: 90%;
+            font-weight: 500;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .bubble.harness .bubble-sender { color: var(--harness-color); justify-content: center; }
+
+        /* Itinerary Draft Card */
+        .itinerary-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.85rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .itinerary-item {
+            font-size: 0.8rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px dashed #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .itinerary-item:last-child {
+            border-bottom: none;
+        }
+
+        .itinerary-item strong {
+            color: var(--primary);
+        }
+
+        .screen-footer {
+            background: #ffffff;
+            border-top: 1px solid #f1f5f9;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #e2e8f0;
+            height: 4px;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.35s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <span class="badge">기획팀 눈높이 아키텍처 설명서</span>
+            <h1>🤖 아바트립(AVA-Trip) 멀티 에이전트 협상 구조</h1>
+            <p class="subtitle">
+                "진짜 친구 3명이 카톡방에서 여행 조율을 시작합니다."<br>
+                에이전트들이 사용자 대신 취향을 부딪치며 합의점을 찾아가는 백엔드 협상 파이프라인(LangGraph × Harness)의 기획자용 시각 가이드입니다.
+            </p>
+        </header>
+
+        <!-- 아키텍처 다이어그램 시각 자료 -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 28px; padding: 2.5rem 2rem; margin-bottom: 4rem; box-shadow: var(--shadow); text-align: center;">
+            <h2 class="section-title" style="justify-content: center; margin-bottom: 1rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;">
+                <span>🗺️</span> 한눈에 보는 협상 아키텍처 다이어그램
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 750px; margin: 0 auto 2rem auto; line-height: 1.6; font-weight: 400;">
+                부모 총감독(AI)이 일정을 구상해 단톡방에 올리면, 성향이 뚜렷한 세 명의 친구 AI(민수, 서연, 준호)가 병렬로 달려들어 만족도 점수를 매기고 피드백을 내놓으며, 깐깐한 판사(TravelHarness Linter)가 가격과 거리를 엄격히 계산하여 피드백을 주는 유기적인 협상 네트워크 구조입니다.
+            </p>
+            <div style="position: relative; overflow: hidden; border-radius: 20px; border: 1px solid #f1f5f9; display: inline-block; max-width: 100%; box-shadow: 0 15px 35px rgba(79, 70, 229, 0.04);">
+                <img src="./agent_architecture_diagram.png" alt="아바트립 멀티에이전트 아키텍처 다이어그램" style="max-width: 100%; height: auto; display: block; border-radius: 20px; max-height: 600px; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- 3대 역할 분담 설명 -->
+        <h2 class="section-title">👥 아바트립의 3대 핵심 참여자</h2>
+        <div class="grid-roles">
+            <!-- 1. 부모 에이전트 -->
+            <div class="role-card parent">
+                <span class="role-badge">전체 설계 및 조율</span>
+                <div class="role-icon">👔</div>
+                <h3 class="role-name">부모 코디네이터 에이전트</h3>
+                <span class="role-analogy">비유: 베테랑 여행 플래너</span>
+                <p class="role-desc">
+                    전체적인 여행의 큰 뼈대(초안 일정표)를 작성하고 수정하는 <strong>'총감독 AI'</strong>입니다. 친구들(서브 에이전트)이 쏟아내는 불만사항과 판사(Linter)의 에러 경고를 모아, 일정표를 지능적으로 고쳐나가는 자가 교정(Self-Correction)의 책임을 집니다.
+                </p>
+            </div>
+
+            <!-- 2. 자식 에이전트 -->
+            <div class="role-card child">
+                <span class="role-badge">개별 취향 반영</span>
+                <div class="role-icon">🎒</div>
+                <h3 class="role-name">자식 성향 에이전트 (3인)</h3>
+                <span class="role-analogy">비유: 성향 뚜렷한 실제 찐친들</span>
+                <p class="role-desc">
+                    사용자들의 성향(액티비티형 민수, 가성비파 서연, 카페러버 준호)을 그대로 복제한 <strong>'개성 뚜렷한 친구 AI'</strong>들입니다. 부모가 일정표를 짜올 때마다 비동기 병렬로 가동되어 "내 성향 만족도 점수"를 산출하고 피드백을 신랄하게 요구합니다.
+                </p>
+            </div>
+
+            <!-- 3. TravelHarness Linter -->
+            <div class="role-card harness">
+                <span class="role-badge">제약 조건 절대 검증</span>
+                <div class="role-icon">⚖️</div>
+                <h3 class="role-name">TravelHarness Linter</h3>
+                <span class="role-analogy">비유: 깐깐한 물리 법칙 판사</span>
+                <p class="role-desc">
+                    말뿐인 AI들과 달리, <strong>수학과 지리적 거리를 검증하는 기계적인 판사 노드(Non-LLM)</strong>입니다. "이 예산으로 삼척 쏠비치가 가능한가?", "하루 만에 속초에서 삼척을 도보로 왕복하는 동선인가?" 등 물리 법칙 위반(Deadlock)을 연산하고 엄격히 적발합니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- 하이브리드 필요성 배너 -->
+        <div class="advantage-banner">
+            <div class="banner-icon">💡</div>
+            <div class="banner-content">
+                <h3>왜 이렇게 복잡하게 섞어서 쓰나요? (기획적 당위성)</h3>
+                <p>
+                    AI들에게 토론을 그냥 방치해 두면(자유 토론형), 밤새도록 결론을 못 내서 <strong>수십만 원의 API 요금 폭탄</strong>이 나오거나 엉뚱한 우주여행 일정을 합의할 수 있습니다. 그래서 <strong>'기획을 수정하는 1명의 총감독(부모)'</strong>과 <strong>'취향을 체크하는 3명의 친구(자식)'</strong>, 그리고 <strong>'물리 제약을 차단하는 깐깐한 판사(Harness)'</strong>가 삼위일체로 톱니바퀴처럼 맞물려 돌게 하여, 단 2~3회 루프 안에 완벽한 합의안을 도출하는 안전장치입니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- 실시간 시뮬레이션 섹션 -->
+        <h2 class="section-title">🕹️ 실시간 협상 시뮬레이션 놀이터</h2>
+        <div class="simulator-box">
+            
+            <!-- 조율 패널 (Left) -->
+            <div class="sim-inputs">
+                <div class="sim-title-group">
+                    <h3>성향 프로필 조율</h3>
+                    <p>친구들의 성향 슬라이더를 조작하여 다른 조건을 만들어 보세요. 그 후 아래 버튼을 클릭하면 에이전트들이 내부에서 타협하는 가상의 E2E 흐름을 실시간으로 시연해 줍니다.</p>
+                </div>
+
+                <!-- 1. 민수 -->
+                <div class="character-setting char-minsu">
+                    <div class="char-header">
+                        <span class="char-title">🏄‍♂️ 민수 (액티비티 러버)</span>
+                        <span class="char-pref-desc" id="minsu-val">액티비티 선호도: 5</span>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>힐링 추구</span> <span>액티브 추구</span></div>
+                        <input type="range" id="minsu-range" min="1" max="5" value="5" oninput="updateRangeText('minsu', this.value)">
+                    </div>
+                </div>
+
+                <!-- 2. 서연 -->
+                <div class="character-setting char-seoyeon">
+                    <div class="char-header">
+                        <span class="char-title">💸 서연 (가성비 지향)</span>
+                        <span class="char-pref-desc" id="seoyeon-val">가용 예산: 12만원</span>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>무조건 아끼기 (8만원)</span> <span>통 크게 쓰기 (25만원)</span></div>
+                        <input type="range" id="seoyeon-range" min="8" max="25" value="12" oninput="updateRangeText('seoyeon', this.value)">
+                    </div>
+                </div>
+
+                <!-- 3. 준호 -->
+                <div class="character-setting char-junho">
+                    <div class="char-header">
+                        <span class="char-title">☕ 준호 (오션뷰 감성카페)</span>
+                        <span class="char-pref-desc" id="junho-val">카페 가중치: 4</span>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>상관없음</span> <span>카페 투어 매니아</span></div>
+                        <input type="range" id="junho-range" min="1" max="5" value="4" oninput="updateRangeText('junho', this.value)">
+                    </div>
+                </div>
+
+                <!-- 시작 버튼 -->
+                <button class="btn-start" onclick="startSimulation()">
+                    <span>🚀</span> 에이전트 간 대리 협상 및 조율 시작
+                </button>
+            </div>
+
+            <!-- 시연 스크린 (Right) -->
+            <div class="sim-screen">
+                <div class="screen-header">
+                    <span class="screen-title">🗣️ 아바트립 협상 중계방 (E2E Live Console)</span>
+                    <span class="status-dot" id="sim-status-dot"></span>
+                </div>
+                
+                <div class="screen-body" id="chat-body">
+                    <!-- 초기 안내 -->
+                    <div class="bubble parent" style="align-self: center; border-radius: 12px; max-width: 95%; text-align: center;">
+                        <span class="bubble-sender" style="justify-content: center;">💬 가이드</span>
+                        좌측 성향 슬라이더를 세팅하고 협상 버튼을 누르시면, 부모 코디네이터가 1차 초안 작성을 시작하며 협상 방이 열립니다!
+                    </div>
+                </div>
+                
+                <div class="screen-footer">
+                    <div style="width: 100%;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <span id="footer-status-text">대기 중</span>
+                            <span id="footer-percent">0%</span>
+                        </div>
+                        <div class="progress-container" id="progress-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Interactive Logic Script -->
+    <script>
+        function updateRangeText(type, val) {
+            if (type === 'minsu') {
+                document.getElementById('minsu-val').innerText = `액티비티 선호도: ${val}`;
+            } else if (type === 'seoyeon') {
+                document.getElementById('seoyeon-val').innerText = `가용 예산: ${val}만원`;
+            } else if (type === 'junho') {
+                document.getElementById('junho-val').innerText = `카페 가중치: ${val}`;
+            }
+        }
+
+        let isRunning = false;
+
+        async function startSimulation() {
+            if (isRunning) return;
+            isRunning = true;
+
+            const minsu = parseInt(document.getElementById('minsu-range').value);
+            const seoyeon = parseInt(document.getElementById('seoyeon-range').value);
+            const junho = parseInt(document.getElementById('junho-range').value);
+
+            const chatBody = document.getElementById('chat-body');
+            const statusDot = document.getElementById('sim-status-dot');
+            const footerText = document.getElementById('footer-status-text');
+            const footerPercent = document.getElementById('footer-percent');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+
+            // Reset
+            chatBody.innerHTML = '';
+            statusDot.classList.add('active');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            footerPercent.innerText = '0%';
+
+            // Helper to append bubble
+            function addBubble(senderClass, senderName, text, htmlContent = '') {
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${senderClass}`;
+                
+                const senderSpan = document.createElement('span');
+                senderSpan.className = 'bubble-sender';
+                senderSpan.innerText = senderName;
+                
+                const textSpan = document.createElement('div');
+                textSpan.innerText = text;
+                
+                bubble.appendChild(senderSpan);
+                bubble.appendChild(textSpan);
+                
+                if (htmlContent) {
+                    const extra = document.createElement('div');
+                    extra.innerHTML = htmlContent;
+                    bubble.appendChild(extra);
+                }
+                
+                chatBody.appendChild(bubble);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            // --- STEP 1: Parent Init ---
+            footerText.innerText = '부모 에이전트 초안 작성 중...';
+            progressBar.style.width = '15%';
+            footerPercent.innerText = '15%';
+            await sleep(1500);
+
+            let initialDraft = `
+                <div class="itinerary-card">
+                    <div class="itinerary-item">📍 10:00 - 삼척 맹방해변 서핑 코스 <strong>(예상비용: 8만원)</strong></div>
+                    <div class="itinerary-item">📍 13:00 - 로컬 물회 전문점 식사 <strong>(예상비용: 2만원)</strong></div>
+                    <div class="itinerary-item">📍 15:00 - 삼척 환선굴 탐험 코스 <strong>(예상비용: 1.5만원)</strong></div>
+                </div>
+            `;
+            addBubble('parent', '👔 부모 코디네이터 (AI 총감독)', '삼척 당일치기 1차 여행 코스 초안 수립을 완료했습니다. 각자 취향에 맞는지 의견 주시기 바랍니다.', initialDraft);
+            
+            // --- STEP 2: Sub-agents Parallel Scoring ---
+            footerText.innerText = '서브 에이전트 3인 병렬 취향 검토 중...';
+            progressBar.style.width = '35%';
+            footerPercent.innerText = '35%';
+            await sleep(1800);
+
+            // Minsu
+            let minsuMsg = minsu >= 4 
+                ? `오전 서핑 대만족입니다! 삼척 환선굴 액티비티도 훌륭해요! (만족도: 4.8 / 5.0)`
+                : `서핑은 저한테 좀 과해요. 액티비티 단계를 낮춰주세요. (만족도: 2.2 / 5.0)`;
+            addBubble('child-a', '🏄‍♂️ 민수 (액티비티)', minsuMsg);
+
+            // Seoyeon
+            let totalCost = 11.5; // Cost of Surf + Food + Cave = 8 + 2 + 1.5 = 11.5
+            let seoyeonMsg = (totalCost > seoyeon)
+                ? `예산 한도 비상입니다! 오늘 서핑이랑 점심, 환선굴만 합쳐도 인당 ${totalCost}만원인데, 제가 설정한 예산(${seoyeon}만원)을 아슬아슬하게 채우거나 초과합니다. 서핑 단가를 깎거나 빼주세요! (만족도: 1.8 / 5.0)`
+                : `이 정도면 예산 범위(${seoyeon}만원) 안에 다 들어옵니다. 무난합니다! (만족도: 4.0 / 5.0)`;
+            addBubble('child-b', '💸 서연 (가성비)', seoyeonMsg);
+
+            // Junho
+            let junhoMsg = junho >= 4
+                ? `음식점만 있고 이쁜 바다 감성 카페가 통째로 빠져있네요... 맹방해변 옆 오션뷰 카페라도 추가해줬으면 합니다. (만족도: 2.0 / 5.0)`
+                : `카페 없어도 전 괜찮습니다. 일정대로 가죠! (만족도: 4.2 / 5.0)`;
+            addBubble('child-c', '☕ 준호 (오션뷰 카페)', junhoMsg);
+
+            // --- STEP 3: TravelHarness Linter ---
+            footerText.innerText = 'TravelHarness 물리적 제약 조건 검증 중...';
+            progressBar.style.width = '55%';
+            footerPercent.innerText = '55%';
+            await sleep(1500);
+
+            let harnessError = '';
+            let harnessScore = 'SUCCESS';
+            
+            // Check budget error condition
+            if (totalCost > seoyeon) {
+                harnessError += `❌ [Budget Violate] 총 소요 예산(${totalCost}만원) > 서연님 가용 상한선(${seoyeon}만원)\n`;
+                harnessScore = 'FAIL';
+            }
+            
+            // Check cafe condition for Junho
+            if (junho >= 4 && harnessScore !== 'FAIL') {
+                harnessError += `⚠️ [Preference Alarm] 준호님의 카페 선호 가중치(${junho}) 대비 일정 내 지정 카페 전무!\n`;
+            }
+
+            let harnessText = harnessScore === 'FAIL'
+                ? `[ERROR] 물리 제약 검증기 (Harness Engine) - 실패\n---------------------------------------------\n${harnessError}결과: 1차 초안 반려 및 부모 노드로 루프 복귀.`
+                : `[WARN/SUCCESS] 물리 제약 검증기 (Harness Engine) - 통과\n---------------------------------------------\n${harnessError || '검증 통과: 예산 및 동선 제약 무결성 확인.'}\n결과: 조정안 수렴 가능성 매우 높음.`;
+
+            addBubble('harness', '⚖️ TravelHarness Linter (물리 판사)', harnessText);
+
+            // --- STEP 4: Parent Self-Correction (Looping) ---
+            footerText.innerText = '부모 에이전트 자가 교정 및 2차 일정 조율 중...';
+            progressBar.style.width = '75%';
+            footerPercent.innerText = '75%';
+            await sleep(2200);
+
+            let isAdjustmentDone = (totalCost > seoyeon || junho >= 4);
+            let finalDraft = '';
+
+            if (isAdjustmentDone) {
+                let correctedCost = totalCost;
+                let textFix = '';
+                
+                if (totalCost > seoyeon) {
+                    correctedCost -= 3.0; // Reduce Surf duration cost (8 -> 5)
+                    textFix += '서연님의 예산 준수를 위해 서핑 코스를 풀타임에서 1시간 단축형 패키지(8만 원 -> 5만 원)로 다듬어 비용을 대폭 세이브하고, ';
+                }
+                
+                if (junho >= 4) {
+                    correctedCost += 0.7; // Add Cafe (0.7)
+                    textFix += '준호님의 요청사항을 반영하여 맹방해변 서핑 후 바로 옆 오션뷰 카페(커피 7천 원) 일정을 추가하였습니다.';
+                } else {
+                    textFix += '이동 동선의 지리적 쾌적함을 고도화하였습니다.';
+                }
+
+                finalDraft = `
+                    <div class="itinerary-card" style="border-color: var(--accent);">
+                        <div class="itinerary-item">📍 10:00 - 삼척 맹방해변 서핑 (단축체험) <strong style="color: var(--accent);">(수정: 5만원)</strong></div>
+                        <div class="itinerary-item">📍 11:30 - 삼척 오션뷰 로스터리 카페 <strong>(추가: 0.7만원)</strong></div>
+                        <div class="itinerary-item">📍 13:00 - 로컬 물회 전문점 식사 <strong>(2만원)</strong></div>
+                        <div class="itinerary-item">📍 15:00 - 삼척 환선굴 탐험 코스 <strong>(1.5만원)</strong></div>
+                        <div class="itinerary-item" style="border-top: 1px solid #e2e8f0; font-weight: bold;">💸 최종 연산 예산: ${correctedCost}만원 (상한선 ${seoyeon}만원 이하 확보)</div>
+                    </div>
+                `;
+                addBubble('parent', '👔 부모 코디네이터 (AI 총감독)', `의견 및 검증 실패 사항을 접수하여 2차 조율을 마쳤습니다. ${textFix}`, finalDraft);
+            } else {
+                finalDraft = initialDraft;
+                addBubble('parent', '👔 부모 코디네이터 (AI 총감독)', `모든 친구들의 만족도가 높아 1차 일정표를 최종안으로 유지하겠습니다.`, finalDraft);
+            }
+
+            // --- STEP 5: Final Agreement Success ---
+            footerText.innerText = '최종 타협 수렴 여부 최종 스캔 중...';
+            progressBar.style.width = '95%';
+            footerPercent.innerText = '95%';
+            await sleep(1800);
+
+            // Final check by Harness
+            addBubble('harness', '⚖️ TravelHarness Linter (물리 판사)', `[SUCCESS] 최종 물리 제약 검증 성공\n---------------------------------------------\n- 예산 범위 이내 검증 성공\n- 동선 무결성 스캔 통과\n결과: 최종 합의안(END) 승인 처리.`);
+
+            // Final cheer from friends
+            addBubble('child-a', '🏄‍♂️ 민수', `서핑 시간이 줄어든 건 아쉽지만 이 정도 일정이면 대만족입니다! 가죠!`);
+            addBubble('child-b', '💸 서연', `예산 범위 세이브 완료! 이 비용이면 당장 갈 수 있어요. 찬성합니다.`);
+            addBubble('child-c', '☕ 준호', `아름다운 바다 오션뷰 카페 일정이 생겨서 너무 마음에 듭니다. 좋아요!`);
+
+            // Done state
+            footerText.innerText = '협상 완료 (최종 일정 확정)';
+            progressBar.style.width = '100%';
+            footerPercent.innerText = '100%';
+            statusDot.classList.remove('active');
+            
+            // Celebration/Finish
+            await sleep(300);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            isRunning = false;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>

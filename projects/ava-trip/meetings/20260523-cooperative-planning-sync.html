@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤝 아바트립(AVA-Trip) 기획-개발 1차 얼라인먼트 싱크</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.05);
+            
+            --primary: #4f46e5; /* Soft Violet */
+            --primary-light: #e0e7ff;
+            --secondary: #0ea5e9; /* Soft Ocean Blue */
+            --secondary-light: #e0f2fe;
+            --accent: #10b981; /* Fresh Emerald */
+            --accent-light: #d1fae5;
+            --rose: #f43f5e;
+            --rose-light: #ffe4e6;
+            --amber: #d97706;
+            --amber-light: #fef3c7;
+            
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            --font-display: 'Outfit', 'Noto Sans KR', sans-serif;
+            --font-sans: 'Inter', 'Noto Sans KR', sans-serif;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 10px 30px rgba(79, 70, 229, 0.04), 0 1px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.02) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-bottom: 5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1.25rem;
+            background: var(--primary-light);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+            letter-spacing: 0.03em;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* ---------------- WELCOME SECTION ---------------- */
+        .welcome-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .welcome-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.50rem;
+        }
+
+        .welcome-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ---------------- SECTION CARDS ---------------- */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title span.icon {
+            font-size: 1.6rem;
+        }
+
+        /* ---------------- Part 1: WEAPONS ---------------- */
+        .grid-weapons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-weapons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .weapon-card {
+            background: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .weapon-card:hover {
+            background: #ffffff;
+            border-color: rgba(79, 70, 229, 0.2);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.03);
+        }
+
+        .weapon-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .weapon-name {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .weapon-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ---------------- Part 2: AGENDAS ---------------- */
+        .agenda-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .agenda-item {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.75rem;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .agenda-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .agenda-item.opt1::before { background: var(--primary); }
+        .agenda-item.opt2::before { background: var(--secondary); }
+        .agenda-item.opt3::before { background: var(--amber); }
+        .agenda-item.opt4::before { background: var(--accent); }
+
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .agenda-num {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .agenda-item.opt1 .agenda-num { background: var(--primary-light); color: var(--primary); }
+        .agenda-item.opt2 .agenda-num { background: var(--secondary-light); color: var(--secondary); }
+        .agenda-item.opt3 .agenda-num { background: var(--amber-light); color: var(--amber); }
+        .agenda-item.opt4 .agenda-num { background: var(--accent-light); color: var(--accent); }
+
+        .agenda-question {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .agenda-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .discussion-points {
+            background: #fafafa;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .points-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+        }
+
+        .points-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .points-list li {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+
+        .points-list li::before {
+            content: '📌';
+            font-size: 0.75rem;
+        }
+
+        /* ---------------- CHECKLIST ---------------- */
+        .check-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: #fafafa;
+            padding: 0.85rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .check-item:hover {
+            border-color: rgba(79, 70, 229, 0.2);
+            background: #ffffff;
+        }
+
+        .check-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .check-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .check-item.done {
+            background: var(--accent-light);
+            border-color: var(--accent);
+        }
+
+        .check-item.done .check-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <span class="badge">기획-개발 Sync 세션 가이드</span>
+            <h1>아바트립 1차 기획-개발 얼라인먼트</h1>
+            <p class="subtitle">에이전트 조율 파이프라인의 실무 구현을 위해 기획 파트와 합의해야 할 핵심 연동 요건</p>
+        </header>
+
+        <!-- 회의 개요 -->
+        <div class="welcome-box">
+            <h3 class="welcome-title">회의 목적</h3>
+            <p class="welcome-text">
+                사용자의 취향 데이터를 수집하고, 이를 AI 에이전트 간의 타협 프로세스 및 물리 제약 검증기(Harness)에 동적으로 연동하기 위한 설계 요건을 조율하고 의사결정을 완료합니다.
+            </p>
+        </div>
+
+        <!-- Part 1: 기술적 규격 및 정의 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">💻</span>
+                아키텍처 스펙 및 백엔드 기능 명세
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.6;">
+                시스템 구현상 기획 요건과 직접 맞물리는 3대 코어 기술 정의입니다.
+            </p>
+            
+            <div class="grid-weapons">
+                <!-- Spac A -->
+                <div class="weapon-card">
+                    <div class="weapon-icon">👤</div>
+                    <h4 class="weapon-name">1. 페르소나 컨텍스트 주입</h4>
+                    <p class="weapon-desc">
+                        사용자가 온보딩 과정에서 선택한 취향 프로필(예산 상한, 최대 허용 이동 거리 등)을 PostgreSQL DB에서 조회하여 각 에이전트 세션의 시스템 프롬프트에 동적 삽입(RAG)합니다.
+                    </p>
+                </div>
+
+                <!-- Spac B -->
+                <div class="weapon-card">
+                    <div class="weapon-icon">🔄</div>
+                    <h4 class="weapon-name">2. 비동기 병렬 처리 모델</h4>
+                    <p class="weapon-desc">
+                        3인의 서브 에이전트 호출을 비동기 병렬(Async Parallel) 구조로 동시 처리하여 API 지연 시간(Latency)을 최소화하고 리소스를 절감합니다.
+                    </p>
+                </div>
+
+                <!-- Spac C -->
+                <div class="weapon-card">
+                    <div class="weapon-icon">🛡️</div>
+                    <h4 class="weapon-name">3. TravelHarness Linter</h4>
+                    <p class="weapon-desc">
+                        LLM과 분리된 순수 파이썬 노드입니다. PostGIS 공간 연산으로 실제 이동 경로를 산출하고, 사칙연산으로 예산을 체크하여 물리 제약 위반(Linter Fail) 여부를 최종 판정합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2: 기획 파트 협의 의제 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">📋</span>
+                기획-개발 정렬을 위한 4대 핵심 의제
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; line-height: 1.6;">
+                PRD와 유저 시나리오를 구성할 때 기술 구현 제약과 합의를 도출해야 할 세부 설계 요건입니다.
+            </p>
+
+            <div class="agenda-list">
+                
+                <!-- Agenda 1 -->
+                <div class="agenda-item opt1">
+                    <div class="agenda-header">
+                        <span class="agenda-num">의제 01 • 성향 데이터 정량화</span>
+                        <span class="agenda-question">온보딩 데이터의 데이터베이스 매핑 규격 설계</span>
+                    </div>
+                    <p class="agenda-desc">
+                        성향 질문지의 추상적 선택지를 하네스 검증 규칙(Linter Rules)이 연산할 수 있는 명확한 정량적 수치로 가공해야 합니다.
+                    </p>
+                    <div class="discussion-points">
+                        <h5 class="points-title">세부 검토 사항</h5>
+                        <ul class="points-list">
+                            <li>소비 성향(가성비형/지출형)에 따른 1일 가용 예산의 구체적 구간 한도 설정 (ex. 인당 5만 원, 10만 원, 15만 원 등).</li>
+                            <li>이동 선호도(단거리 선호/상관없음)에 따른 하루 최대 이동 거리(km) 상한선 기준 수립 (ex. 30km, 50km 등).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Agenda 2 -->
+                <div class="agenda-item opt2">
+                    <div class="agenda-header">
+                        <span class="agenda-num">의제 02 • 비동기 UX 연출</span>
+                        <span class="agenda-question">AI 협상 대기 상태에서의 로딩 연출 사양 결정</span>
+                    </div>
+                    <p class="agenda-desc">
+                        부모 에이전트가 1차 초안을 수립하고 서브 에이전트 검토를 취합하는 동안의 로딩 상태(Loading State) UX 연출 사양을 확정합니다.
+                    </p>
+                    <div class="discussion-points">
+                        <h5 class="points-title">세부 검토 사항</h5>
+                        <ul class="points-list">
+                            <li>에이전트들이 타협하는 시뮬레이션 로그(ex. "서핑을 추가하여 민수님의 취향 만족도가 증가했습니다")를 SSE 스트리밍으로 렌더링하는 사안 검토.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Agenda 3 -->
+                <div class="agenda-item opt3">
+                    <div class="agenda-header">
+                        <span class="agenda-num">의제 03 • 예외 처리 룰</span>
+                        <span class="agenda-question">제약 조건 충돌(Deadlock) 발생 시 시스템 대응 사양 수립</span>
+                    </div>
+                    <p class="agenda-desc">
+                        에이전트 간의 조건 대립(ex. 극단적으로 낮은 예산 조건과 비싼 레포츠 필수 조건의 충돌)으로 하네스 검증이 최종 실패할 때의 예외 처리 비즈니스 룰을 합의합니다.
+                    </p>
+                    <div class="discussion-points">
+                        <h5 class="points-title">세부 검토 사항</h5>
+                        <ul class="points-list">
+                            <li>지속 검증 실패 시, 우선순위가 낮은 옵션을 자동 배제하는 알고리즘 작동 여부 결정.</li>
+                            <li>사용자 화면에 충돌 요인을 명시하고 조율을 유도하는 중재용 팝업/모달 UI 제공 사양 조율.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Agenda 4 -->
+                <div class="agenda-item opt4">
+                    <div class="agenda-header">
+                        <span class="agenda-num">의제 04 • 프로토타입 범위</span>
+                        <span class="agenda-question">1차 마일스톤 MVP 구현 범위 락(Lock)</span>
+                    </div>
+                    <p class="agenda-desc">
+                        안정적인 무결성 검증과 공공 API(TourAPI) 통합을 위해 프로토타입 범위의 명확한 경계선을 설정합니다.
+                    </p>
+                    <div class="discussion-points">
+                        <h5 class="points-title">세부 검토 사항</h5>
+                        <ul class="points-list">
+                            <li>1차 POC 단계의 지리적 한계를 '강원도 삼척/강릉 권역'으로 국한하고, 일정 기간을 '당일 코스'로 제약하는 사안 동의 여부.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Part 3: 의사결정 체크보드 -->
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="icon">📝</span>
+                의사결정 체크리스트 (Sync Board)
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.6;">
+                회의 도중 의사결정이 완료된 항목을 실시간으로 체크하며 트래킹할 수 있습니다.
+            </p>
+            
+            <div class="check-container">
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="chk1">
+                    <label class="check-text" for="chk1">온보딩 설문지 변수별 DB 정량 수치 매핑 규격안 확정</label>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="chk2">
+                    <label class="check-text" for="chk2">AI 협상 진행 상태 로그(SSE 스트리밍) 렌더링 UX 채택 여부</label>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="chk3">
+                    <label class="check-text" for="chk3">최종 타협 불가(Deadlock) 감지 시의 예외 처리 및 팝업 중재 사양 수립</label>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="chk4">
+                    <label class="check-text" for="chk4">1차 출품 MVP 스펙(강원 동해안 당일치기) 권역 및 범위 락(Lock) 승인</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Concurrency -->
+    <script>
+        function toggleCheck(card) {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            
+            if (event.target !== checkbox && event.target.tagName !== 'LABEL') {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            if (checkbox.checked) {
+                card.classList.add('done');
+            } else {
+                card.classList.remove('done');
+            }
+        }
+    </script>
+</body>
+</html>

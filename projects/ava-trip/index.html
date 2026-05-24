@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="아바트립 관광공모전 프로젝트의 기획, 기술, 시각자료 공유 허브입니다." />
+    <title>AVA-Trip 공유 자료 | Namu Dashboard</title>
+    <link rel="stylesheet" href="./assets/share.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <nav class="top-nav" aria-label="페이지 이동">
+        <a href="../../">Namu Dashboard</a>
+      </nav>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">2026 Tourism Data Contest</p>
+        <h1 id="page-title">AVA-Trip 공유 자료</h1>
+        <p>관광공모전 프로젝트를 진행하며 생성한 기획 문서, 기술 명세, 에이전트 구조 설명, PWA 시뮬레이터, 회의 기록을 팀 공유용 정적 페이지로 모았습니다.</p>
+      </section>
+      <section class="summary-grid" aria-label="프로젝트 요약">
+        <div class="summary-item"><strong>2026.09.21</strong><span>1차 심사 제출 마감 기준 일정</span></div>
+        <div class="summary-item"><strong>AI 협상</strong><span>여행자별 페르소나 에이전트 간 대리 조율</span></div>
+        <div class="summary-item"><strong>PWA</strong><span>Next.js, FastAPI, LangGraph, PostGIS 기반 모바일 플랫폼</span></div>
+      </section>
+      <section class="section" aria-labelledby="프로젝트-맥락">
+        <div class="section-header">
+          <div>
+            <h2 id="프로젝트-맥락">프로젝트 맥락</h2>
+            <p>팀원과 외부 에이전트가 먼저 봐야 할 기준 문서입니다.</p>
+          </div>
+        </div>
+        <div class="card-grid">
+          <a class="share-card" href="docs/project-context-map.html">
+            <span class="card-group">프로젝트 맥락</span>
+            <strong>프로젝트 컨텍스트 맵</strong>
+            <span>아바트립 서비스 맥락, 절대 경로, 외부 에이전트 작업 기준을 정리한 마스터 레퍼런스입니다.</span>
+            <small>PROJECT_CONTEXT_MAP.md</small>
+          </a>
+          <a class="share-card" href="docs/inbox.html">
+            <span class="card-group">업무 현황</span>
+            <strong>Inbox 및 통합 할 일</strong>
+            <span>최근 요청, 태스크, 실행 대기 항목을 모아 둔 현행 수집함입니다.</span>
+            <small>00_Inbox/Inbox.md</small>
+          </a>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="기획-및-제출">
+        <div class="section-header">
+          <div>
+            <h2 id="기획-및-제출">기획 및 제출</h2>
+            <p>공모전 제출과 개발 범위를 정렬하기 위한 계획 문서입니다.</p>
+          </div>
+        </div>
+        <div class="card-grid">
+          <a class="share-card" href="docs/final-proposal.html">
+            <span class="card-group">기획 및 제출</span>
+            <strong>공모전 제안서 초안</strong>
+            <span>2026 관광데이터 활용 공모전 제출용 제안서 초안입니다.</span>
+            <small>01_Planning/FINAL_PROPOSAL.md</small>
+          </a>
+          <a class="share-card" href="docs/feature-list.html">
+            <span class="card-group">기획 및 제출</span>
+            <strong>핵심 기능 목록</strong>
+            <span>PWA, 지도, 협상형 AI 일정 조율 등 핵심 기능 범위를 정리한 문서입니다.</span>
+            <small>01_Planning/Feature_List.md</small>
+          </a>
+          <a class="share-card" href="docs/developer-action-items.html">
+            <span class="card-group">기획 및 제출</span>
+            <strong>개발자 액션 아이템</strong>
+            <span>개발 진행을 위한 실무 체크리스트와 다음 작업 단위입니다.</span>
+            <small>01_Planning/Developer_Action_Items.md</small>
+          </a>
+          <a class="share-card" href="docs/kickoff-preparation-guide.html">
+            <span class="card-group">기획 및 제출</span>
+            <strong>9/21 역산 킥오프 가이드</strong>
+            <span>1차 심사 제출일 기준 마일스톤과 킥오프 준비 흐름입니다.</span>
+            <small>01_Planning/kickoff_preparation_guide.md</small>
+          </a>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="기술-명세">
+        <div class="section-header">
+          <div>
+            <h2 id="기술-명세">기술 명세</h2>
+            <p>아키텍처, 인프라, 에이전트 조율 모델을 확인합니다.</p>
+          </div>
+        </div>
+        <div class="card-grid">
+          <a class="share-card" href="docs/technical-stack.html">
+            <span class="card-group">기술 명세</span>
+            <strong>기술 아키텍처 명세</strong>
+            <span>Next.js, FastAPI, Celery, Redis, PostGIS, LangGraph 기반 기술 스택 명세입니다.</span>
+            <small>01_Planning/Technical_Stack.md</small>
+          </a>
+          <a class="share-card" href="docs/infrastructure-specification.html">
+            <span class="card-group">기술 명세</span>
+            <strong>인프라 및 서버 배포 명세</strong>
+            <span>Lightsail 중심 배포, 운영 환경, 서버 구성 원칙을 정리한 문서입니다.</span>
+            <small>01_Planning/Infrastructure_Specification.md</small>
+          </a>
+          <a class="share-card" href="docs/agent-methodology-review.html">
+            <span class="card-group">기술 연구</span>
+            <strong>에이전트 조율 모델 분석</strong>
+            <span>Hermes 방식과 Harness 방식의 조율 구조를 비교한 기술 검토 보고서입니다.</span>
+            <small>03_Research/Agent_Methodology_Review.md</small>
+          </a>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="html-시각-자료">
+        <div class="section-header">
+          <div>
+            <h2 id="html-시각-자료">HTML 시각 자료</h2>
+            <p>설명형 웹페이지와 시뮬레이터를 그대로 공유합니다.</p>
+          </div>
+        </div>
+        <div class="card-grid">
+          <a class="share-card" href="research/parent-child-agent-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>부모-자식 에이전트 협상 구조 시뮬레이터</strong>
+            <span>아바트립 멀티에이전트 협상 구조를 다이어그램과 단계별 설명으로 보여주는 핵심 시각자료입니다.</span>
+            <small>03_Research/Parent_Child_Agent_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/pwa-planning-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>PWA 모바일 앱 기획자용 시뮬레이션 가이드</strong>
+            <span>PWA 모바일 앱 관점에서 사용자 경험과 구현 범위를 설명하는 기획자용 안내 페이지입니다.</span>
+            <small>03_Research/PWA_Planning_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/core-features-pipeline-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>핵심 기능 파이프라인 설명</strong>
+            <span>아바트립 핵심 기능이 어떤 데이터와 실행 흐름으로 연결되는지 설명합니다.</span>
+            <small>03_Research/Core_Features_Pipeline_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/hermes-vs-harness-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>Hermes vs Harness 설명</strong>
+            <span>에이전트 방법론과 검증 계층의 역할 차이를 시각적으로 비교합니다.</span>
+            <small>03_Research/Hermes_vs_Harness_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/langgraph-harness-pipeline-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>LangGraph Harness 파이프라인</strong>
+            <span>LangGraph 오케스트레이션과 TravelHarness 검증 흐름을 단계별로 설명합니다.</span>
+            <small>03_Research/LangGraph_Harness_Pipeline_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/pwa-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>PWA 설명 자료</strong>
+            <span>PWA 개념과 앱형 웹서비스 구현 방향을 팀 공유용으로 정리한 페이지입니다.</span>
+            <small>03_Research/PWA_Explainer.html</small>
+          </a>
+          <a class="share-card" href="research/three-friends-cooperative-explainer.html">
+            <span class="card-group">시각 자료</span>
+            <strong>세 친구 협력 플래닝 설명</strong>
+            <span>여러 여행자가 함께 일정을 조율하는 협력 시나리오를 설명합니다.</span>
+            <small>03_Research/Three_Friends_Cooperative_Explainer.html</small>
+          </a>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="회의-기록">
+        <div class="section-header">
+          <div>
+            <h2 id="회의-기록">회의 기록</h2>
+            <p>주요 의사결정과 논의 내용을 HTML로 확인합니다.</p>
+          </div>
+        </div>
+        <div class="card-grid">
+          <a class="share-card" href="meetings/20260523-cooperative-planning-sync.html">
+            <span class="card-group">회의 기록</span>
+            <strong>2026-05-23 협력 플래닝 싱크</strong>
+            <span>협력형 일정 조율 방향과 논의 내용을 정리한 회의 공유 페이지입니다.</span>
+            <small>04_Meetings/20260523_Cooperative_Planning_Sync.html</small>
+          </a>
+          <a class="share-card" href="meetings/20260523-infrastructure-alignment.html">
+            <span class="card-group">회의 기록</span>
+            <strong>2026-05-23 인프라 얼라인먼트</strong>
+            <span>초기 서버, 배포, 인프라 구성 방향을 맞춘 회의 공유 페이지입니다.</span>
+            <small>04_Meetings/20260523_Infrastructure_Alignment.html</small>
+          </a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

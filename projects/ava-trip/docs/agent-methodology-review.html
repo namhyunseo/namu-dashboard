@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Hermes 방식과 Harness 방식의 조율 구조를 비교한 기술 검토 보고서입니다." />
+    <title>에이전트 조율 모델 분석 | AVA-Trip</title>
+    <link rel="stylesheet" href="../assets/share.css" />
+  </head>
+  <body>
+    <main class="doc-shell">
+      <nav class="top-nav" aria-label="페이지 이동">
+        <a href="../">자료 목록</a>
+      </nav>
+      <article class="doc-article">
+        <header class="doc-header">
+          <p class="eyebrow">AVA-Trip Document</p>
+          <h1>에이전트 조율 모델 분석</h1>
+          <p>Hermes 방식과 Harness 방식의 조율 구조를 비교한 기술 검토 보고서입니다.</p>
+          <span class="source-path">source: 03_Research/Agent_Methodology_Review.md</span>
+        </header>
+        <div class="markdown-body">
+<h1 id="hermes-agent-harness-engineering-기술-분석-및-검토서">📑 Hermes Agent &amp; Harness Engineering 기술 분석 및 검토서</h1>
+<p>본 문서는 아바트립(AVA-Trip) 멀티 에이전트 시스템 설계에 있어 핵심 후보로 검토 중인 <strong>Hermes Agent(Nous Research)</strong>와 <strong>Harness Engineering(Mitchell Hashimoto)</strong> 두 기술에 대한 정확한 정의를 정립하고, 각각의 개별적 타당성 검토 및 향후 융합 시너지 모델을 제안합니다.</p>
+<hr>
+<h2 id="1-기술-재정의-및-기존-오해-정정">🔍 1. 기술 재정의 및 기존 오해 정정</h2>
+<p>이전 설계 초안에서 발생한 개념적 혼선 및 용어의 오해를 다음과 같이 바로잡습니다.</p>
+<h3 id="hermes-agent-nous-research">① Hermes Agent (Nous Research)</h3>
+<ul>
+<li><strong>오해</strong>: 단순한 비동기 이벤트 분산 메시징 처리 파이프라인으로 간주되었습니다.</li>
+<li><strong>사실</strong>: <strong>Nous Research</strong>가 2026년 2월 공식 출시한 <strong>오픈소스 자율 AI 에이전트 시스템</strong>(<code>https://hermes-agent.org/ko/</code>)입니다. </li>
+<li>사용자의 선호도와 과거 이력을 모든 세션에서 유지하는 <strong>지속 메모리(Persistent Memory)</strong>를 지원합니다.</li>
+<li>에이전트가 문제를 해결하는 과정에서 재사용 가능한 도구를 스스로 개발하여 문서화하는 <strong>자동 스킬 생성(Automated Skill Creation, <code>SKILL.md</code> 포맷)</strong> 능력을 갖추고 있습니다.</li>
+<li>Telegram, Discord, Slack 등 여러 플랫폼과 연결할 수 있는 <strong>멀티플랫폼 게이트웨이</strong>를 기본 탑재하고 있습니다.</li>
+</ul>
+<h3 id="harness-engineering-하네스-엔지니어링-mitchell-hashimoto">② Harness Engineering (하네스 엔지니어링 - Mitchell Hashimoto)</h3>
+<ul>
+<li><strong>오해</strong>: 게임이론 기반의 수학적 내시 균형 솔버인 "HANES"로 해석되었습니다.</li>
+<li><strong>사실</strong>: HashiCorp의 창업자 Mitchell Hashimoto가 제안한 <strong>에이전트 시스템 구축 패러다임</strong>(<code>Agent = Model + Harness</code>)입니다.</li>
+<li>확률적으로 동작하여 환각(Hallucination)이 잦은 LLM(Model) 단독으로는 완벽한 비즈니스 로직을 수행할 수 없다는 문제에서 출발합니다.</li>
+<li>LLM 외부를 둘러싸는 단단한 소프트웨어 장치인 <strong>하네스(Harness)</strong>를 구축하여, 입력/출력 스키마를 검증하고, 도메인 제약조건을 물리적으로 검사(Linter)하며, 오류 발생 시 모델이 스스로 수정한 후 올바른 값을 출력할 때까지 피드백 루프(Self-Correction)를 돌리는 구조입니다.</li>
+</ul>
+<hr>
+<h2 id="2-개별-기술의-아바트립-ava-trip-적용-타당성-검토">🧠 2. 개별 기술의 아바트립(AVA-Trip) 적용 타당성 검토</h2>
+<p>두 개의 에이전트 기술이 아바트립 서비스의 개별 요구사항을 해결하는 데 있어 얼마나 적절한지 분석합니다.</p>
+<h3 id="2-1-hermes-agent-nous-research-검토">2-1. Hermes Agent (Nous Research) 검토</h3>
+<p>아바트립은 <strong>"그룹 여행자들의 성향(페르소나)을 대리하여 에이전트들이 상호 협상하는 시스템"</strong>입니다. 이 관점에서 Hermes Agent의 특성을 평가합니다.</p>
+<h4 id="긍정적-측면-도입-시의-이점">👍 긍정적 측면 (도입 시의 이점)</h4>
+<ol>
+<li><strong>지속적 페르소나 메모리</strong>: 사용자가 과거에 작성한 일정 피드백, 좋아하는 여행 스타일(예: "활동적인 액티비티 선호", "인스타 감성 카페 필수")을 에이전트가 완벽히 기억하고 시간이 지날수록 고도화된 개인화 서비스를 제공할 수 있습니다.</li>
+<li><strong>스킬의 자동 확장</strong>: 여행지 TourAPI 조회, 날씨 API 조회, 카카오맵 경로 검증 등 여행 계획에 필요한 새로운 기능(Tool)을 에이전트가 스스로 <code>SKILL.md</code> 형태의 규격화된 코드로 구성하고 실행할 수 있습니다.</li>
+<li><strong>멀티플랫폼 확장성</strong>: 사용자가 PWA 앱뿐만 아니라, <strong>Telegram이나 Discord 단체방</strong>에 아바트립 에이전트를 초대하여 실시간으로 일정을 추천받고 조율하는 강력한 사용자 경험(UX)으로 확장이 매우 용이합니다.</li>
+</ol>
+<h4 id="제약-및-고려사항-보완이-필요한-점">⚠️ 제약 및 고려사항 (보완이 필요한 점)</h4>
+<ul>
+<li><strong>리소스 오버헤드</strong>: Hermes Agent는 독자적인 CLI 백엔드와 데몬 프로세스 구조를 가지고 있어, 모바일 PWA 환경에서 다수의 일반 사용자를 대상으로 매 세션마다 온전한 Hermes 인스턴스를 무겁게 띄우는 것은 비효율적일 수 있습니다.</li>
+<li><strong>적용 방향</strong>: Hermes Agent의 풀 에이전트 데몬을 그대로 사용하는 대신, 해당 아키텍처가 가진 <strong>(1) 지속적 메모리 저장 체계</strong> 및 <strong>(2) <code>SKILL.md</code> 규격의 도구 컴파일 표준</strong>을 아바트립 AI 백엔드(FastAPI + Celery) 내에 경량 모델로 이식하거나 헤드리스(Headless) 워커 형태로 활용하는 것이 적절합니다.</li>
+</ul>
+<hr>
+<h3 id="2-2-harness-engineering-하네스-엔지니어링-검토">2-2. Harness Engineering (하네스 엔지니어링) 검토</h3>
+<p>여행 계획 서비스는 <strong>"물리적/정량적 제약 조건이 극도로 깐깐한 도메인"</strong>입니다. (예: 이동거리의 한계, 운영 시간 매칭, 예산 한도 준수, 일정의 시간적 순서 보장 등).</p>
+<h4 id="긍정적-측면-도입-시의-이점">👍 긍정적 측면 (도입 시의 이점)</h4>
+<ol>
+<li><strong>환각(Hallucination)의 원천 방지</strong>: LLM은 두 관광지의 실제 거리나 차량 이동 시간을 임의로 지어내기 쉽습니다. 하네스가 이 출력을 가로채어 <strong>PostGIS(지리 데이터 연산)</strong> 및 카카오맵 API를 통해 이동 시간이 3시간을 초과하거나 불가능한 동선인 경우 즉각 감지합니다.</li>
+<li><strong>자가 교정(Self-Correction) 피드백 루프</strong>: 하네스가 오류(예: *"A 카페는 화요일 휴무인데 화요일 일정에 배치됨"*)를 발견하면, 이를 정중하고 구체적인 피드백 메시지로 구성하여 에이전트에 다시 입력합니다. 모델은 이 피드백을 기반으로 실수를 인정하고 올바른 대안 일정을 재생성합니다.</li>
+<li><strong>예산/비용 Linter</strong>: 에이전트가 합의한 총비용이 사용자가 설정한 예산 한도(ex. 1인당 20만 원)를 초과할 경우 하네스가 이를 거절하고 다른 저렴한 스팟으로 변경하도록 강제합니다.</li>
+</ol>
+<h4 id="제약-및-고려사항">⚠️ 제약 및 고려사항</h4>
+<ul>
+<li><strong>지연 시간(Latency) 증가</strong>: 자가 교정 피드백 루프가 여러 번 돌게 되면 LLM API 호출 횟수가 늘어나 사용자의 대기 시간이 길어질 수 있습니다.</li>
+<li><strong>적용 방향</strong>: 피드백 루프의 최대 시도 횟수를 엄격히 제한(최대 2~3회)하고, 최종 실패 시에는 하네스가 <strong>수학적 보정 알고리즘</strong>(예: 예산 초과 시 마지막 우선순위 관광지를 자동으로 일정에서 탈락시키는 등)을 적용해 확정적인 출력을 최종 보장해야 합니다.</li>
+</ul>
+<hr>
+<h2 id="3-hermes-harness-융합-시너지-모델-conceptual-architecture">🤝 3. Hermes × Harness 융합 시너지 모델 (Conceptual Architecture)</h2>
+<p>두 기술을 결합하여 <strong>"지속적이고 똑똑한 개성을 가진 에이전트(Hermes)가 소프트웨어 하네스(Harness)의 안전망 안에서 확실하게 동작하는 구조"</strong>를 실현할 수 있습니다.</p>
+<pre><code class="language-mermaid">flowchart TD
+    subgraph UserGroup [사용자 협상 그룹]
+        UserA[사용자 A - PWA]
+        UserB[사용자 B - PWA]
+    end
+
+    subgraph HermesCore [Hermes Agent 레이어 - 에이전트 개성 및 도구]
+        AgentA[Hermes 에이전트 A&lt;br/&gt;- 사용자 A 메모리 탑재&lt;br/&gt;- 선호도/과거 이력 학습]
+        AgentB[Hermes 에이전트 B&lt;br/&gt;- 사용자 B 메모리 탑재&lt;br/&gt;- 선호도/과거 이력 학습]
+        
+        AgentA &lt;--&gt;|비동기 조율 및 타협 제안| AgentB
+    end
+
+    subgraph HarnessSystem [Harness Engineering 레이어 - 안전망 및 검증]
+        SchemaVerifier[1. Schema Validator&lt;br/&gt;Pydantic JSON 포맷 보장]
+        TravelLinter[2. Travel Linter&lt;br/&gt;- PostGIS 공간 동선 검증&lt;br/&gt;- 운영시간/휴무일 대조&lt;br/&gt;- 총 예산 초과 여부 확인]
+        SelfCorrection[3. Self-Correction Loop&lt;br/&gt;오류 발견 시 에이전트에 피드백 전달]
+    end
+
+    subgraph CoreEngine [데이터 및 도구 엔진]
+        PostGIS[(PostgreSQL + PostGIS)]
+        TourAPI[TourAPI 4.0 / Kakao Map]
+    end
+
+    %% 데이터 흐름
+    UserA --&gt;|여행 성향 입력| AgentA
+    UserB --&gt;|여행 성향 입력| AgentB
+    
+    AgentA &amp; AgentB --&gt;|초안 일정 합의문 작성| SchemaVerifier
+    SchemaVerifier --&gt;|올바른 포맷 완료| TravelLinter
+    
+    TravelLinter &lt;--&gt;|공간 및 공공데이터 쿼리| CoreEngine
+    
+    TravelLinter --&gt;|동선 오류 / 예산 초과 감지| SelfCorrection
+    SelfCorrection -.-&gt;|오류 내용 피드백 및 재작성 지시| HermesCore
+    
+    TravelLinter --&gt;|100% 무결점 보장| FinalOutput[최종 무결점 일정표 확정]
+    FinalOutput --&gt;|사용자 브라우저 스트리밍 렌더링| UserGroup</code></pre>
+<h3 id="융합-파이프라인의-이점">융합 파이프라인의 이점</h3>
+<ol>
+<li><strong>안전성 + 개인화의 공존</strong>: 사용자의 주관적인 성향(Hermes 메모리)을 충족하면서도, 실제 여행 시 발생할 수 있는 시간적/공간적 오류(Harness 검증)가 0%인 완벽한 여행 계획이 수립됩니다.</li>
+<li><strong>컴파일된 여행 스킬(Tool)의 신뢰성</strong>: 에이전트가 자동 생성한 <code>SKILL.md</code> (예: "특정 카테고리 음식점 탐색 툴")이 실행될 때, 하네스 내부의 샌드박스에서 검증되므로 시스템 전반의 보안과 안정성이 보장됩니다.</li>
+</ol>
+<hr>
+<h2 id="4-후속-리팩토링-및-문서-현행화-계획">🛠️ 4. 후속 리팩토링 및 문서 현행화 계획</h2>
+<p>해당 기술 정의 정립에 따라, 프로젝트 루트 및 기획 폴더의 문서들을 즉시 다음과 같이 업데이트할 예정입니다.</p>
+<ol>
+<li><strong><a href="file:///Users/namhyeonseo/devlop/tourismContest/01_Planning/Technical_Stack.md">01_Planning/Technical_Stack.md</a> 리팩토링</strong></li>
+</ol>
+<ul>
+<li>수학적 솔버로서 기술되었던 "HANES" 용어 및 수식을 모두 <strong>Harness Engineering(하네스 검증 및 자가 교정 피드백 루프)</strong>에 맞게 전면 수정합니다.</li>
+<li>"HERMES"의 설명 부분을 Nous Research의 <strong>Hermes Agent</strong> 아키텍처(지속 메모리 및 스킬 빌딩 최적화)로 개편합니다.</li>
+</ul>
+<ol>
+<li><strong><a href="file:///Users/namhyeonseo/devlop/tourismContest/00_Inbox/Inbox.md">00_Inbox/Inbox.md</a> 태스크 갱신</strong></li>
+</ol>
+<ul>
+<li>상기 분석 결과를 반영하여 에이전트 엔진 관련 마일스톤의 세부 항목을 업데이트합니다.</li>
+</ul>
+<ol>
+<li><strong><a href="file:///Users/namhyeonseo/devlop/tourismContest/03_Research/Hermes_vs_Hanes_Explainer.html">03_Research/Hermes_vs_Hanes_Explainer.html</a> 리네이밍 및 코드 수정</strong></li>
+</ol>
+<ul>
+<li>기존 "Hermes vs Hanes(내시 솔버)"의 구도를 <strong>"Hermes(자율 에이전트) + Harness(안전망 검증 루프)"</strong>의 조화로운 협업 모델을 시뮬레이션하는 직관적인 웹 플레이그라운드로 전면 개편합니다.</li>
+</ul>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
