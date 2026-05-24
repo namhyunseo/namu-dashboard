@@ -22,6 +22,7 @@ Live site: https://namhyunseo.github.io/namu-dashboard/
 ├── designs
 │   └── index.html
 ├── projects
+│   ├── index.html
 │   └── ava-trip
 │       ├── index.html
 │       ├── docs
@@ -72,4 +73,4 @@ GitHub Pages에서는 저장소의 `main` 브랜치 루트(`/`)를 배포 대상
 
 ## Update Project Share Pages
 
-관광공모전처럼 팀 공유가 필요한 프로젝트 문서는 `projects/{project-id}/` 아래에 정적 HTML로 정리합니다. 현재 아바트립 자료는 `projects/ava-trip/`에서 관리하며, 메인 허브의 `Projects` 링크는 `src/data/links.js`에서 연결합니다.
+관광공모전처럼 팀 공유가 필요한 프로젝트 문서는 `projects/{project-id}/` 아래에 정적 HTML로 정리합니다. 프로젝트 선택 목록은 `projects/index.html`에서 관리하며, 현재 아바트립 자료는 `projects/ava-trip/`에서 관리합니다. 메인 허브의 `Projects` 링크는 `src/data/links.js`에서 연결합니다.
