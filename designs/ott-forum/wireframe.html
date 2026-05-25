@@ -971,7 +971,9 @@ body {
   <a href="#s02">02 공지사항</a>
   <a href="#s03">03 공지 상세</a>
   <a href="#s02b">02-B 보도자료</a>
-  <a href="#s02c">02-C 갤러리</a>
+  <a href="#s02m">02-C 멤버활동</a>
+  <a href="#s02md">02-C 상세</a>
+  <a href="#s02c">02-D 갤러리</a>
   <a href="#s04">04 학술활동</a>
   <a href="#s05">05 학술 상세</a>
   <a href="#s07">07 로그인</a>
@@ -986,7 +988,9 @@ body {
   <a href="#s11">M-02 공지사항</a>
   <a href="#s12">M-03 공지 상세</a>
   <a href="#sm02b">M-02B 보도자료</a>
-  <a href="#sm02c">M-02C 갤러리</a>
+  <a href="#sm02m">M-02C 멤버활동</a>
+  <a href="#sm02md">M-02C 상세</a>
+  <a href="#sm02c">M-02D 갤러리</a>
   <a href="#s13">M-04 학술활동</a>
   <a href="#s14">M-05 학술 상세</a>
   <a href="#s15">M-07 로그인</a>
@@ -1968,11 +1972,256 @@ body {
 
 
 <!-- ════════════════════════════════════════════════
-     SCREEN 02-C · 포럼 소식 — 포토 갤러리
+     SCREEN 02-C · 포럼 소식 — 멤버 활동
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s02m">
+  <div class="screen-label">
+    <span class="num">02-C</span>
+    <span class="title">포럼 소식 — 멤버 활동</span>
+    <span class="note">이사진 기고문·외부 기사 링크 목록 · 작성자 · 매체명 · 검색</span>
+  </div>
+  <div class="screen-frame">
+
+    <header class="site-header">
+      <div class="site-logo">[OTT포럼]</div>
+      <nav class="site-nav">
+        <a href="#">홈</a>
+        <a href="#">포럼 소개</a>
+        <a href="#" class="active">포럼 소식</a>
+        <a href="#">학술활동</a>
+        <a href="#">회원 공간</a>
+      </nav>
+      <div class="site-header-right">
+        <a href="#" class="btn btn-outline btn-sm">로그인</a>
+      </div>
+    </header>
+
+    <div class="cat-tabs">
+      <div class="cat-tab">공지사항</div>
+      <div class="cat-tab">보도자료</div>
+      <div class="cat-tab on">멤버 활동</div>
+      <div class="cat-tab">포토 갤러리</div>
+    </div>
+
+    <div class="breadcrumb">
+      <a href="#">홈</a><span class="sep">›</span>
+      <a href="#">포럼 소식</a><span class="sep">›</span>
+      <span class="cur">멤버 활동</span>
+    </div>
+
+    <div class="page-hd">
+      <h1>멤버 활동</h1>
+      <p>OTT포럼 이사진의 기고문 및 외부 기사 링크를 제공합니다.</p>
+    </div>
+
+    <div class="board-toolbar">
+      <select class="filter-select">
+        <option>전체 연도</option>
+        <option>2025</option>
+        <option>2024</option>
+        <option>2023</option>
+      </select>
+      <div class="search-box">
+        <input type="text" placeholder="검색어 입력">
+        <button>검색</button>
+      </div>
+    </div>
+
+    <table class="board-table">
+      <thead>
+        <tr>
+          <th class="tc" style="width:60px;">번호</th>
+          <th style="width:120px;">작성자</th>
+          <th style="width:100px;">매체명</th>
+          <th>제목</th>
+          <th style="width:104px;">게재일</th>
+          <th class="tr" style="width:72px;">조회</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tc muted">8</td>
+          <td>[이사 성명]</td>
+          <td><span class="badge">[매체명]</span></td>
+          <td>
+            <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — OTT 정책 관련 칼럼 예시] ↗</a>
+          </td>
+          <td class="muted" style="font-size:12px;">2025.04.22</td>
+          <td class="tr muted">198</td>
+        </tr>
+        <tr>
+          <td class="tc muted">7</td>
+          <td>[이사 성명]</td>
+          <td><span class="badge">[매체명]</span></td>
+          <td>
+            <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — OTT 산업 동향 분석 예시] ↗</a>
+          </td>
+          <td class="muted" style="font-size:12px;">2025.03.18</td>
+          <td class="tr muted">254</td>
+        </tr>
+        <tr>
+          <td class="tc muted">6</td>
+          <td>[이사 성명]</td>
+          <td><span class="badge">[매체명]</span></td>
+          <td>
+            <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — 미디어 정책 기고 예시] ↗</a>
+          </td>
+          <td class="muted" style="font-size:12px;">2025.02.10</td>
+          <td class="tr muted">312</td>
+        </tr>
+        <tr>
+          <td class="tc muted">5</td>
+          <td>[이사 성명]</td>
+          <td><span class="badge">[매체명]</span></td>
+          <td>
+            <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — 예시 텍스트] ↗</a>
+          </td>
+          <td class="muted" style="font-size:12px;">2025.01.14</td>
+          <td class="tr muted">176</td>
+        </tr>
+        <tr>
+          <td class="tc muted">4</td>
+          <td>[이사 성명]</td>
+          <td><span class="badge">[매체명]</span></td>
+          <td>
+            <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — 예시 텍스트] ↗</a>
+          </td>
+          <td class="muted" style="font-size:12px;">2024.12.05</td>
+          <td class="tr muted">289</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button class="pg-btn">‹</button>
+      <button class="pg-btn on">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">›</button>
+    </div>
+
+    <footer class="site-footer">
+      <div>[포럼 공식 명칭] &nbsp;·&nbsp; [주소]</div>
+      <div class="footer-links">
+        <a href="#">개인정보 처리방침</a>
+        <a href="#">이용약관</a>
+      </div>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 02-C 상세 · 포럼 소식 — 멤버 활동 상세
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="s02md">
+  <div class="screen-label">
+    <span class="num">02-C 상세</span>
+    <span class="title">포럼 소식 — 멤버 활동 상세</span>
+    <span class="note">작성자 · 매체 · 발췌문 · 원문 보기 버튼 · 이전/다음글</span>
+  </div>
+  <div class="screen-frame">
+
+    <header class="site-header">
+      <div class="site-logo">[OTT포럼]</div>
+      <nav class="site-nav">
+        <a href="#">홈</a>
+        <a href="#">포럼 소개</a>
+        <a href="#" class="active">포럼 소식</a>
+        <a href="#">학술활동</a>
+        <a href="#">회원 공간</a>
+      </nav>
+      <div class="site-header-right">
+        <a href="#" class="btn btn-outline btn-sm">로그인</a>
+      </div>
+    </header>
+
+    <div class="cat-tabs">
+      <div class="cat-tab">공지사항</div>
+      <div class="cat-tab">보도자료</div>
+      <div class="cat-tab on">멤버 활동</div>
+      <div class="cat-tab">포토 갤러리</div>
+    </div>
+
+    <div class="breadcrumb">
+      <a href="#">홈</a><span class="sep">›</span>
+      <a href="#">포럼 소식</a><span class="sep">›</span>
+      <a href="#">멤버 활동</a><span class="sep">›</span>
+      <span class="cur">상세보기</span>
+    </div>
+
+    <div class="post-hd">
+      <span class="badge">[매체명]</span>
+      <h2>[기고문 제목 — 두 줄 분량의 제목이 이 위치에 표시됩니다]</h2>
+      <div class="post-meta">
+        <span>작성자: [이사 성명]</span>
+        <span>소속: [소속기관 · 직함]</span>
+        <span>게재일: 2025.04.22</span>
+        <span>조회: 198</span>
+      </div>
+    </div>
+
+    <div class="post-body">
+      <div class="info-box">
+        <div><span class="label">작성자</span>[이사 성명] · [소속기관] · [직함]</div>
+        <div><span class="label">매체</span>[매체명]</div>
+        <div><span class="label">게재일</span>2025.04.22</div>
+        <div><span class="label">분야</span>[OTT 정책 / 미디어 산업 등]</div>
+      </div>
+
+      <!-- 발췌문 -->
+      <div style="margin:24px 0 8px;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;">발췌문</div>
+      <div style="border-left:3px solid var(--border);padding:12px 20px;margin-bottom:20px;color:var(--mid);font-size:13px;line-height:1.8;font-style:italic;">
+        [기고문 주요 내용 발췌 — 2~3줄 분량의 핵심 문장을 관리자가 직접 입력합니다. 원문의 핵심 주장이나 인사이트를 요약하여 독자의 클릭을 유도합니다.]
+      </div>
+
+      <div class="ph-lines" style="margin-bottom:20px;">
+        <div class="ph-line f"></div>
+        <div class="ph-line m"></div>
+        <div class="ph-line f"></div>
+        <div class="ph-line s"></div>
+      </div>
+
+      <!-- 원문 보기 버튼 -->
+      <div style="display:flex;justify-content:center;margin:28px 0;">
+        <a href="#" class="btn btn-solid" style="padding:12px 36px;font-size:14px;gap:8px;">
+          원문 보기 &nbsp;↗
+        </a>
+      </div>
+    </div>
+
+    <div class="post-nav">
+      <div class="nav-row">
+        <span class="nav-dir">▲ 이전글</span>
+        <span class="nav-title">[이전 기고문 제목 예시]</span>
+        <span class="notice-date">2025.03.18</span>
+      </div>
+      <div class="nav-row">
+        <span class="nav-dir">▼ 다음글</span>
+        <span class="nav-title muted">다음 게시글이 없습니다.</span>
+        <span class="notice-date">—</span>
+      </div>
+      <div class="post-nav-btns">
+        <button class="btn btn-outline">목록으로</button>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div>[포럼 공식 명칭] &nbsp;·&nbsp; [주소]</div>
+      <div class="footer-links">
+        <a href="#">개인정보 처리방침</a>
+        <a href="#">이용약관</a>
+      </div>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SCREEN 02-D · 포럼 소식 — 포토 갤러리
      ════════════════════════════════════════════════ -->
 <div class="screen" id="s02c">
   <div class="screen-label">
-    <span class="num">02-C</span>
+    <span class="num">02-D</span>
     <span class="title">포럼 소식 — 포토 갤러리</span>
     <span class="note">이미지 그리드 · 연도 필터 · 페이지네이션</span>
   </div>
@@ -3265,11 +3514,199 @@ body {
 
 
 <!-- ════════════════════════════════════════════════
-     MOBILE 02-C · 모바일 포토 갤러리 (375px)
+     MOBILE 02-C · 모바일 멤버 활동 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="sm02m">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-02C</span>
+    <span class="title">모바일 — 멤버 활동</span>
+    <span class="note">375px · 포럼 소식 탭 · 이사진 기고 링크 목록</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>
+          <a href="#">포럼 소식</a><span class="sep">›</span>멤버 활동
+        </div>
+
+        <div class="mob-page-hd">
+          <h2>멤버 활동</h2>
+          <p>OTT포럼 이사진의 기고문 및 외부 기사 링크를 제공합니다.</p>
+        </div>
+
+        <div style="display:flex;overflow-x:auto;border-bottom:2px solid var(--border);background:#fff;">
+          <div style="padding:10px 12px;font-size:12px;color:var(--mid);white-space:nowrap;">공지사항</div>
+          <div style="padding:10px 12px;font-size:12px;color:var(--mid);white-space:nowrap;">보도자료</div>
+          <div style="padding:10px 12px;font-size:12px;color:var(--dark);border-bottom:2px solid var(--dark);margin-bottom:-2px;font-weight:700;white-space:nowrap;">멤버 활동</div>
+          <div style="padding:10px 12px;font-size:12px;color:var(--mid);white-space:nowrap;">포토 갤러리</div>
+        </div>
+
+        <div class="mob-toolbar" style="border-top:none;">
+          <div class="mob-search">
+            <input type="text" placeholder="검색어 입력">
+            <button>검색</button>
+          </div>
+        </div>
+
+        <div class="mob-board-list">
+          <div class="mob-board-row">
+            <div class="mob-board-meta" style="display:flex;flex-direction:column;gap:3px;">
+              <span style="font-size:11px;font-weight:600;color:var(--dark);">[이사 성명]</span>
+              <span class="badge">[매체명]</span>
+            </div>
+            <div class="mob-board-title">
+              <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — OTT 정책 관련 칼럼 예시] ↗</a>
+            </div>
+            <div class="mob-board-date">2025.04.22 · 조회 198</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta" style="display:flex;flex-direction:column;gap:3px;">
+              <span style="font-size:11px;font-weight:600;color:var(--dark);">[이사 성명]</span>
+              <span class="badge">[매체명]</span>
+            </div>
+            <div class="mob-board-title">
+              <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — OTT 산업 동향 분석 예시] ↗</a>
+            </div>
+            <div class="mob-board-date">2025.03.18 · 조회 254</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta" style="display:flex;flex-direction:column;gap:3px;">
+              <span style="font-size:11px;font-weight:600;color:var(--dark);">[이사 성명]</span>
+              <span class="badge">[매체명]</span>
+            </div>
+            <div class="mob-board-title">
+              <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — 미디어 정책 기고 예시] ↗</a>
+            </div>
+            <div class="mob-board-date">2025.02.10 · 조회 312</div>
+          </div>
+          <div class="mob-board-row">
+            <div class="mob-board-meta" style="display:flex;flex-direction:column;gap:3px;">
+              <span style="font-size:11px;font-weight:600;color:var(--dark);">[이사 성명]</span>
+              <span class="badge">[매체명]</span>
+            </div>
+            <div class="mob-board-title">
+              <a href="#" style="color:var(--dark);text-decoration:none;">[기고문 제목 — 예시 텍스트] ↗</a>
+            </div>
+            <div class="mob-board-date">2024.12.05 · 조회 289</div>
+          </div>
+        </div>
+
+        <div class="mob-pg">
+          <button class="mob-pg-btn">‹</button>
+          <button class="mob-pg-btn on">1</button>
+          <button class="mob-pg-btn">2</button>
+          <button class="mob-pg-btn">›</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     MOBILE 02-C 상세 · 모바일 멤버 활동 상세 (375px)
+     ════════════════════════════════════════════════ -->
+<div class="screen" id="sm02md">
+  <div class="screen-label">
+    <span class="num" style="background:#4a5568;">M-02C 상세</span>
+    <span class="title">모바일 — 멤버 활동 상세</span>
+    <span class="note">375px · 작성자 · 매체 · 발췌문 · 원문 보기 버튼</span>
+  </div>
+  <div class="screen-frame">
+    <div class="mob-wrap">
+      <div class="mob-frame">
+
+        <header class="mob-header">
+          <div class="mob-logo">[OTT포럼]</div>
+          <div class="hamburger"><span></span><span></span><span></span></div>
+        </header>
+
+        <div class="mob-breadcrumb">
+          <a href="#">홈</a><span class="sep">›</span>
+          <a href="#">포럼 소식</a><span class="sep">›</span>
+          <a href="#">멤버 활동</a><span class="sep">›</span>상세보기
+        </div>
+
+        <div class="mob-post-hd">
+          <span class="badge">[매체명]</span>
+          <h3>[기고문 제목 — 두 줄 분량의 제목이 이 위치에 표시됩니다]</h3>
+          <div class="mob-post-meta">
+            <span>작성자: [이사 성명]</span>
+            <span>[소속기관 · 직함]</span>
+            <span>2025.04.22 · 조회 198</span>
+          </div>
+        </div>
+
+        <div class="mob-post-body">
+          <div class="mob-info-box">
+            <div class="mob-info-row"><span class="mob-info-label">작성자</span>[이사 성명]</div>
+            <div class="mob-info-row"><span class="mob-info-label">소속</span>[소속기관 · 직함]</div>
+            <div class="mob-info-row"><span class="mob-info-label">매체</span>[매체명]</div>
+            <div class="mob-info-row"><span class="mob-info-label">게재일</span>2025.04.22</div>
+          </div>
+
+          <div style="margin:16px 0 6px;font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;">발췌문</div>
+          <div style="border-left:3px solid var(--border);padding:10px 14px;margin-bottom:16px;color:var(--mid);font-size:12px;line-height:1.8;font-style:italic;">
+            [기고문 주요 내용 발췌 — 2~3줄 분량의 핵심 문장을 관리자가 직접 입력합니다.]
+          </div>
+
+          <div class="ph-lines" style="margin-bottom:16px;">
+            <div class="ph-line f"></div>
+            <div class="ph-line m"></div>
+            <div class="ph-line f"></div>
+            <div class="ph-line s"></div>
+          </div>
+
+          <!-- 원문 보기 버튼 -->
+          <a href="#" class="btn btn-solid" style="width:100%;padding:12px;font-size:13px;justify-content:center;margin:8px 0 4px;">
+            원문 보기 &nbsp;↗
+          </a>
+        </div>
+
+        <div class="mob-post-nav">
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▲ 이전글</span>
+            <span class="mob-nav-title">[이전 기고문 제목 예시]</span>
+          </div>
+          <div class="mob-nav-row">
+            <span class="mob-nav-dir">▼ 다음글</span>
+            <span class="mob-nav-title muted">다음 게시글이 없습니다.</span>
+          </div>
+        </div>
+        <div style="padding:12px 16px;text-align:center;">
+          <button class="btn btn-outline btn-sm" style="width:100%;">목록으로</button>
+        </div>
+
+        <div class="mob-footer">
+          [포럼 공식 명칭]<br>
+          © 2025 &nbsp;·&nbsp; <a href="#">개인정보 처리방침</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     MOBILE 02-D · 모바일 포토 갤러리 (375px)
      ════════════════════════════════════════════════ -->
 <div class="screen" id="sm02c">
   <div class="screen-label">
-    <span class="num" style="background:#4a5568;">M-02C</span>
+    <span class="num" style="background:#4a5568;">M-02D</span>
     <span class="title">모바일 — 포토 갤러리</span>
     <span class="note">375px · 2열 이미지 그리드 · 페이지네이션</span>
   </div>
