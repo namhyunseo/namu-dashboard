@@ -11,23 +11,116 @@
     <link rel="stylesheet" href="./src/styles/base.css" />
     <link rel="stylesheet" href="./src/styles/layout.css" />
   </head>
-  <body>
-    <main class="shell">
-      <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow">Personal Route Hub</p>
-        <h1 id="page-title">Namu Dashboard</h1>
-        <p class="intro-copy">
-          블로그, 포트폴리오, 개발 프로젝트, 디자인 시안과 기타 작업물로 이동하는
-          메인 허브입니다.
-        </p>
-      </section>
+  <body class="dev-home">
+    <main class="workspace-shell">
+      <header class="workspace-topbar">
+        <div class="window-controls" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="workspace-path">namu-dashboard / main</span>
+        <button id="command-open" class="command-trigger" type="button">
+          <span>command</span>
+          <kbd>⌘K</kbd>
+        </button>
+      </header>
 
-      <section class="route-panel" aria-label="주요 이동 경로">
-        <div id="route-list" class="route-list"></div>
-      </section>
+      <div class="workspace-frame">
+        <aside class="workspace-sidebar" aria-label="워크스페이스 탐색">
+          <a class="workspace-brand" href="./">
+            <span>ND</span>
+            <strong>Namu Dashboard</strong>
+          </a>
+          <nav id="workspace-tree" class="workspace-tree" aria-label="경로 트리"></nav>
+        </aside>
+
+        <section class="workspace-main" aria-labelledby="page-title">
+          <div class="editor-tabs" aria-label="열린 탭">
+            <span class="editor-tab is-active">NAMU.md</span>
+            <span class="editor-tab">routes.json</span>
+            <a class="editor-tab" href="./projects/">projects/</a>
+          </div>
+
+          <section class="editor-pane">
+            <ol class="editor-gutter" aria-hidden="true">
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ol>
+
+            <div class="editor-content">
+              <p class="eyebrow">personal route hub</p>
+              <h1 id="page-title">Namu Dashboard</h1>
+
+              <div class="workspace-metrics" aria-label="대시보드 상태">
+                <div><span>deploy</span><strong>pages</strong></div>
+                <div><span>project</span><strong>ava-trip</strong></div>
+                <div><span>render</span><strong>static</strong></div>
+              </div>
+
+              <div id="route-list" class="route-list"></div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="inspector-panel" aria-label="선택 경로 정보">
+          <section class="inspector-section">
+            <span class="inspector-label">selected</span>
+            <h2 id="inspector-current-title">개발 프로젝트</h2>
+            <p id="inspector-current-desc">
+              프로젝트별 자료와 공유 페이지를 선택하는 목록
+            </p>
+            <a id="inspector-current-link" class="inspector-action" href="./projects/">
+              open route
+            </a>
+          </section>
+
+          <section class="inspector-section">
+            <span class="inspector-label">active docs</span>
+            <ul class="inspector-list">
+              <li>AVA-Trip</li>
+              <li>Mermaid Preview</li>
+              <li>GitHub Pages</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+
+      <footer class="workspace-statusbar" aria-label="상태">
+        <span>main</span>
+        <span>github-pages</span>
+        <span>static-html</span>
+        <span>ready</span>
+      </footer>
     </main>
 
-    <script src="./src/data/links.js?v=projects-1"></script>
-    <script src="./src/scripts/app.js?v=projects-1"></script>
+    <div id="command-palette" class="command-palette" hidden>
+      <div class="command-backdrop" data-command-close></div>
+      <section class="command-dialog" aria-label="빠른 이동 검색">
+        <input
+          id="command-search"
+          class="command-search"
+          type="search"
+          placeholder="이동할 페이지 검색"
+          autocomplete="off"
+        />
+        <div id="command-results" class="command-results"></div>
+      </section>
+    </div>
+
+    <script src="./src/data/links.js?v=home-4"></script>
+    <script src="./src/scripts/app.js?v=home-4"></script>
   </body>
 </html>

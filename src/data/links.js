@@ -10,6 +10,7 @@ window.NAMU_LINK_GROUPS = [
         description: "개발 기록, 생각, 작업 노트를 정리한 공간",
         url: "#",
         status: "준비 중",
+        shortcut: "Notes",
       },
       {
         title: "Portfolio",
@@ -17,6 +18,7 @@ window.NAMU_LINK_GROUPS = [
         description: "대표 작업물과 소개를 확인하는 공간",
         url: "#",
         status: "준비 중",
+        shortcut: "Work",
       },
       {
         title: "Projects",
@@ -24,6 +26,7 @@ window.NAMU_LINK_GROUPS = [
         description: "프로젝트별 자료와 공유 페이지를 선택하는 목록",
         url: "./projects/",
         status: "목록 보기",
+        shortcut: "Live",
       },
     ],
   },
@@ -38,6 +41,7 @@ window.NAMU_LINK_GROUPS = [
         description: "프로젝트별 디자인 시안 목록",
         url: "./designs/",
         status: "목록 보기",
+        shortcut: "Client",
       },
       {
         title: "Client Share",
@@ -45,6 +49,7 @@ window.NAMU_LINK_GROUPS = [
         description: "프로젝트별 전달 자료와 확인 링크",
         url: "#",
         status: "준비 중",
+        shortcut: "Share",
       },
     ],
   },
@@ -59,6 +64,7 @@ window.NAMU_LINK_GROUPS = [
         description: "실험, 테스트, 기타 작업물 모음",
         url: "#",
         status: "준비 중",
+        shortcut: "Lab",
       },
     ],
   },
