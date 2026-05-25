@@ -55,6 +55,12 @@ h1 { margin: 0; font-size: clamp(2.4rem, 6vw, 5rem); line-height: .98; letter-sp
 .markdown-body code { padding: .12rem .36rem; border-radius: 5px; background: var(--surface-muted); font-size: .92em; }
 .markdown-body pre { overflow: auto; padding: 16px; border-radius: 8px; background: #171a1f; color: #eef1f3; }
 .markdown-body pre code { padding: 0; background: transparent; color: inherit; }
+.markdown-body pre:has(> code.language-mermaid) {
+  min-height: 160px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: transparent;
+}
 .markdown-body .mermaid {
   overflow-x: auto;
   margin: 1.4rem 0 2rem;
