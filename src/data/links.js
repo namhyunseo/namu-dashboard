@@ -28,6 +28,14 @@ window.NAMU_LINK_GROUPS = [
         status: "목록 보기",
         shortcut: "Live",
       },
+      {
+        title: "TourAPI Places Preview",
+        label: "관광 데이터 테스트",
+        description: "AVA-Trip 제주 장소 목록, 상세, 혼잡도 미리보기",
+        url: "./projects/ava-trip/research/places-preview.html",
+        status: "테스트",
+        shortcut: "Demo",
+      },
     ],
   },
   {
