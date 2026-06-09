@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Lightsail 중심 배포, 운영 환경, 서버 구성 원칙을 정리한 문서입니다." />
+    <meta name="description" content="Vercel, API/Worker VPS, Managed PostGIS, TourAPI 배치 캐시 기반 인프라 구성을 정리한 문서입니다." />
     <title>인프라 및 서버 배포 명세 | AVA-Trip</title>
     <link rel="stylesheet" href="../assets/share.css" />
   </head>
@@ -16,99 +16,57 @@
         <header class="doc-header">
           <p class="eyebrow">AVA-Trip Document</p>
           <h1>인프라 및 서버 배포 명세</h1>
-          <p>Lightsail 중심 배포, 운영 환경, 서버 구성 원칙을 정리한 문서입니다.</p>
+          <p>Vercel, API/Worker VPS, Managed PostGIS, TourAPI 배치 캐시 기반 인프라 구성을 정리한 문서입니다.</p>
           <span class="source-path">source: 01_Planning/Infrastructure_Specification.md</span>
         </header>
         <div class="markdown-body">
-<h1 id="아바트립-ava-trip-aws-lightsail-기반-인프라-배포-명세서-infrastructure-setup-specification">🌐 아바트립 (AVA-Trip) AWS Lightsail 기반 인프라 배포 명세서 (Infrastructure Setup Specification)</h1>
-<p>본 문서는 아바트립(AVA-Trip) 서비스의 최종 확정된 배포 인프라인 <strong>Option 1 (AWS Lightsail 단일 VPS + Docker Compose)</strong>의 정밀 구축 명세서입니다. 2GB의 타이트한 서버 자원에서 PostgreSQL/PostGIS, Redis, Celery, FastAPI를 무중단으로 안정적으로 구동하기 위한 OS 커널 최적화 및 컨테이너 오케스트레이션 설정을 기술합니다.</p>
+<h1 id="아바트립-ava-trip-분리형-인프라-배포-명세서-infrastructure-setup-specification">🌐 아바트립 (AVA-Trip) 분리형 인프라 배포 명세서 (Infrastructure Setup Specification)</h1>
+<p>본 문서는 2026-05-29 기준으로 재정리한 아바트립(AVA-Trip)의 권장 인프라 구성입니다. 기존의 <strong>AWS Lightsail 단일 VPS + Docker Compose 전체 탑재</strong> 방식은 PostgreSQL/PostGIS, Redis, FastAPI, Celery, LLM 워커를 2GB RAM 안에 모두 넣어야 하므로 안정성이 낮습니다. 새 구성은 <strong>Vercel 프론트엔드</strong>, <strong>API/Worker 실행 노드</strong>, <strong>Managed PostgreSQL + PostGIS</strong>, <strong>TourAPI 배치 캐시 파이프라인</strong>으로 책임을 분리합니다.</p>
 <hr>
-<h2 id="1-배포-아키텍처-개요">🏗️ 1. 배포 아키텍처 개요</h2>
+<h2 id="1-권장-배포-아키텍처-개요">🏗️ 1. 권장 배포 아키텍처 개요</h2>
 <ul>
-<li><strong>프론트엔드 호스팅 (Next.js PWA)</strong>: <strong>Vercel</strong> (Free Tier - Global CDN 및 HTTPS 자동 구성)</li>
-<li><strong>백엔드 API 및 에이전트 엔진 (VPS)</strong>: <strong>AWS Lightsail</strong> (Ubuntu 22.04 LTS 기반 단일 가상 컴퓨터)</li>
-<li><strong>리버스 프록시 및 SSL</strong>: <strong>Caddy Server</strong> (Let's Encrypt를 통한 HTTPS 인증서 갱신 자동화)</li>
-<li><strong>데이터베이스</strong>: <strong>PostgreSQL v15 + PostGIS v3.3</strong> (Docker 내부 로컬 볼륨 바인딩)</li>
+<li><strong>Frontend</strong>: Vercel에 배포한 Next.js PWA. 지도, 일정 편집, 그룹 초대, SSE 수신, 공유 화면을 담당합니다.</li>
+<li><strong>API/Worker Node</strong>: AWS Lightsail VPS 1대. FastAPI, Celery/RQ Worker, Redis, Caddy만 Docker Compose로 실행합니다.</li>
+<li><strong>Database</strong>: Supabase PostgreSQL + PostGIS 또는 Lightsail Managed PostgreSQL. 장소 검색, 일정, 페르소나, 협상 세션, TourAPI 캐시를 저장합니다.</li>
+<li><strong>Queue/Cache</strong>: MVP 단계에서는 VPS 내부 Redis. 작업 큐, SSE 이벤트 브로커, 짧은 TTL 캐시를 담당합니다.</li>
+<li><strong>Batch Pipeline</strong>: GitHub Actions, 서버 cron, 또는 Worker beat로 TourAPI 데이터를 사전 수집하고 정규화합니다.</li>
+<li><strong>External Services</strong>: TourAPI 4.0, Kakao Map SDK, Gemini API. 앱 요청 시 TourAPI를 매번 직접 호출하지 않고 내부 DB를 우선 조회합니다.</li>
 </ul>
 <hr>
-<h2 id="2-aws-lightsail-인스턴스-사양-및-방화벽-설정">🖥️ 2. AWS Lightsail 인스턴스 사양 및 방화벽 설정</h2>
-<h3 id="2-1-하드웨어-사양">2-1. 하드웨어 사양</h3>
+<h2 id="2-왜-단일-vps에서-분리형으로-바꾸는가">🧭 2. 왜 단일 VPS에서 분리형으로 바꾸는가</h2>
 <ul>
-<li><strong>운영체제 (OS)</strong>: Ubuntu 22.04 LTS (Minimal 권장)</li>
-<li><strong>하드웨어 티어</strong>: RAM 2GB, vCPU 1, SSD 60GB (월 $10 고정 사양)</li>
-<li><strong>고정 IP (Static IP)</strong>: 인스턴스 생성 직후 Lightsail 콘솔에서 <strong>Static IP를 반드시 생성 및 바인딩</strong>하여 재부팅 시 IP 변경을 방지합니다.</li>
+<li><strong>PostGIS는 핵심 데이터 계층</strong>: 장소 반경 검색, 이동 거리 검증, 일정 충돌 검사에 쓰이므로 API/Worker 부하와 분리해야 합니다.</li>
+<li><strong>LLM 워커는 메모리 변동이 큼</strong>: LangGraph/Celery 작업은 순간 메모리 사용량이 커질 수 있어 같은 VPS의 DB 안정성을 위협합니다.</li>
+<li><strong>TourAPI는 실시간 의존 대상이 아님</strong>: 응답 지연, 누락, 호출 제한 가능성이 있으므로 사전 수집 및 로컬 캐시가 기본입니다.</li>
+<li><strong>Vercel은 프론트에 집중</strong>: Next.js PWA, CDN, HTTPS, 정적/동적 UI에 적합하고, 긴 LLM 협상 작업은 별도 Worker에서 처리합니다.</li>
 </ul>
-<h3 id="2-2-네트워크-포트-개방-규칙-lightsail-및-ufw-설정">2-2. 네트워크 포트 개방 규칙 (Lightsail 및 UFW 설정)</h3>
-<p>외부 및 프론트엔드 서비스와의 정상 통신을 위해 최소한의 포트만 외부에 노출합니다.</p>
-<div class="table-wrap"><table><thead><tr><th>포트 번호</th><th>프로토콜</th><th>노출 대상</th><th>서비스명</th><th>목적</th></tr></thead><tbody><tr><td><strong>22</strong></td><td>TCP</td><td>개발자 IP (또는 All)</td><td>SSH</td><td>가상 서버 원격 터미널 접속 및 제어</td></tr><tr><td><strong>80</strong></td><td>TCP</td><td>All (0.0.0.0/0)</td><td>HTTP</td><td>Caddy 리다이렉트 처리용</td></tr><tr><td><strong>443</strong></td><td>TCP</td><td>All (0.0.0.0/0)</td><td>HTTPS</td><td>프론트엔드 Next.js 통신 및 PWA 보안 요구사항 충족</td></tr></tbody></table></div>
 <hr>
-<h2 id="3-os-메모리-최적화-swap-memory-설정">💾 3. OS 메모리 최적화 (Swap Memory 설정)</h2>
-<p>2GB RAM 환경에서 PostgreSQL, Redis, FastAPI, Celery 에이전트 워커를 동시에 띄우면 부하 발생 시 커널 OOM(Out of Memory) Killer에 의해 프로세스가 강제 강등/종료됩니다. 이를 방지하기 위해 <strong>반드시 2GB의 가상 스왑 메모리를 구성</strong>합니다.</p>
-<pre><code class="language-bash"># 1. 2GB 크기의 빈 스왑 파일 생성
-sudo fallocate -l 2G /swapfile
-
-# 2. 파일 권한 설정 (소유자 읽기/쓰기만 허용)
-sudo chmod 600 /swapfile
-
-# 3. 스왑 영역으로 포맷팅
-sudo mkswap /swapfile
-
-# 4. 스왑 파일 활성화
-sudo swapon /swapfile
-
-# 5. 영구 등록을 위해 /etc/fstab 파일 맨 아래에 추가
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-
-# 6. 활성화 정상 여부 검증 (Mem/Swap 항목 확인)
-free -m</code></pre>
+<h2 id="3-mvp-인프라-구성">🧱 3. MVP 인프라 구성</h2>
+<div class="table-wrap"><table><thead><tr><th>영역</th><th>추천 서비스</th><th>역할</th><th>비고</th></tr></thead><tbody><tr><td>Frontend</td><td>Vercel</td><td>Next.js PWA 배포, CDN, HTTPS</td><td>환경변수로 <code>NEXT_PUBLIC_API_BASE_URL</code> 설정</td></tr><tr><td>API</td><td>AWS Lightsail VPS</td><td>FastAPI, SSE, 인증/그룹/일정 API</td><td>최소 2GB RAM, 권장 4GB RAM</td></tr><tr><td>Worker</td><td>AWS Lightsail VPS</td><td>LLM 협상, TourAPI 보강, 일정 검증</td><td>MVP는 API와 같은 VPS, concurrency 1</td></tr><tr><td>DB</td><td>Supabase PostgreSQL + PostGIS</td><td>장소, 페르소나, 일정, 협상 세션 저장</td><td>연결 풀링 사용, 정기 백업 필수</td></tr><tr><td>Redis</td><td>Docker Redis on VPS</td><td>Celery broker, result backend, SSE event cache</td><td>외부 포트 미노출</td></tr><tr><td>Reverse Proxy</td><td>Caddy</td><td>HTTPS, API 도메인 라우팅</td><td><code>api.avatrip...</code> 형태 권장</td></tr><tr><td>Batch</td><td>GitHub Actions 또는 cron</td><td>TourAPI 수집/정규화/동기화</td><td>매일 또는 수동 실행</td></tr></tbody></table></div>
 <hr>
-<h2 id="4-docker-및-docker-compose-신속-설치">🐳 4. Docker 및 Docker Compose 신속 설치</h2>
-<p>Ubuntu 22.04 서버에 Docker 엔진을 가장 가볍고 안전하게 수동 설치하는 커맨드 시퀀스입니다.</p>
-<pre><code class="language-bash"># 패키지 업데이트 및 필수 도구 설치
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
-
-# Docker 공식 GPG 키 추가
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# APT 저장소 등록
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
-
-# Docker 엔진 및 Compose 플러그인 설치
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-
-# docker 명령어 sudo 없이 실행 가능하도록 유저 그룹 추가 (선택)
-sudo usermod -aG docker $USER</code></pre>
+<h2 id="4-데이터-파이프라인-전략">📡 4. 데이터 파이프라인 전략</h2>
+<p>TourAPI 장소 데이터는 앱 요청 시 실시간 호출하지 않습니다. 제주 장소 미리보기에서 확인한 것처럼 목록, 상세, 이미지, 혼잡도, 연관 관광지, 방문자 통계는 서로 다른 API를 조합해야 하므로 사용자 요청 경로에서 직접 처리하면 응답 시간이 불안정해집니다.</p>
+<ol>
+<li><strong>수집</strong>: 지역/카테고리별 장소 목록을 배치로 수집합니다. 예: 제주 관광지, 문화시설, 액티비티, 맛집, 카페, 쇼핑.</li>
+<li><strong>상세 보강</strong>: <code>detailCommon</code>, <code>detailIntro</code>, 이미지, 홈페이지, 전화번호, 운영시간을 별도 작업으로 채웁니다.</li>
+<li><strong>정규화</strong>: 카테고리, 주소, 좌표, 이미지 URL, 운영시간, 요금, 태그를 내부 스키마로 변환합니다.</li>
+<li><strong>공간 인덱싱</strong>: PostGIS <code>geography(Point, 4326)</code> 또는 <code>geometry(Point, 4326)</code> 컬럼과 GiST 인덱스를 둡니다.</li>
+<li><strong>서빙</strong>: 앱은 내부 DB를 우선 조회하고, 누락 데이터만 백그라운드 보강 작업으로 요청합니다.</li>
+</ol>
+<pre><code class="language-mermaid">flowchart LR
+    TourAPI[TourAPI 4.0] -- batch fetch --&gt; Ingest[Collector Job]
+    Ingest -- normalize --&gt; DB[(PostgreSQL + PostGIS)]
+    DB -- query --&gt; API[FastAPI]
+    API -- HTTPS/SSE --&gt; PWA[Next.js PWA]
+    API -- enqueue --&gt; Redis[(Redis)]
+    Redis -- task --&gt; Worker[Worker]
+    Worker -- enrich / validate --&gt; DB</code></pre>
 <hr>
-<h2 id="5-docker-compose-통합-배포-명세-docker-compose-yml">📦 5. Docker Compose 통합 배포 명세 (<code>docker-compose.yml</code>)</h2>
-<p>아바트립 백엔드 전체를 구동하기 위한 통합 <code>docker-compose.yml</code> 구조입니다. 데이터 무결성 보존을 위해 PostgreSQL과 Redis의 볼륨 마운트를 지정합니다.</p>
+<h2 id="5-docker-compose-범위">🐳 5. Docker Compose 범위</h2>
+<p>VPS의 Docker Compose는 API 실행 계층만 담당합니다. PostgreSQL/PostGIS는 Docker Compose에서 제거하고 managed DB 연결 문자열을 환경변수로 주입합니다.</p>
 <pre><code class="language-yaml">version: '3.8'
 
 services:
-  # 1. 지리 공간 데이터베이스 (PostgreSQL + PostGIS)
-  db:
-    image: postgis/postgis:15-3.3-alpine
-    container_name: avatrip-db
-    restart: always
-    environment:
-      POSTGRES_USER: avatrip_admin
-      POSTGRES_PASSWORD: avatrip_secure_password_123  # 실배포 시 변경 필수
-      POSTGRES_DB: avatrip
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U avatrip_admin -d avatrip"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # 2. 메시지 브로커 &amp; 세션 저장소 (Redis)
   redis:
     image: redis:7-alpine
     container_name: avatrip-redis
@@ -116,10 +74,7 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redisdata:/data
-    ports:
-      - "6379:6379"
 
-  # 3. FastAPI 비동기 API 게이트웨이
   web:
     build:
       context: ./backend
@@ -127,18 +82,15 @@ services:
     container_name: avatrip-web
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_started
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgresql://avatrip_admin:avatrip_secure_password_123@db:5432/avatrip
       - REDIS_URL=redis://redis:6379/0
-      - GEMINI_API_KEY=your_gemini_api_key_here  # Google GenAI SDK 연동용 키
     ports:
       - "8000:8000"
 
-  # 4. Celery 비동기 워커 (LangGraph 엔진 탑재)
   worker:
     build:
       context: ./backend
@@ -148,14 +100,12 @@ services:
     command: celery -A main.celery_app worker --loglevel=info -c 1
     depends_on:
       - redis
-      - db
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgresql://avatrip_admin:avatrip_secure_password_123@db:5432/avatrip
       - REDIS_URL=redis://redis:6379/0
-      - GEMINI_API_KEY=your_gemini_api_key_here
-    # 워커는 싱글코어 자원을 고려해 Concurrency(-c 1)를 1로 제한하여 메모리 폭증을 차단합니다.
+    # MVP 단계에서는 LLM 비용과 메모리 폭증 방지를 위해 concurrency 1을 기본값으로 둡니다.
 
-  # 5. Caddy Reverse Proxy (자동 SSL 인증 관리)
   caddy:
     image: caddy:2-alpine
     container_name: avatrip-proxy
@@ -171,48 +121,61 @@ services:
       - web
 
 volumes:
-  pgdata:
   redisdata:
   caddy_data:
   caddy_config:</code></pre>
 <hr>
-<h2 id="6-리버스-프록시-설정-caddyfile">🔒 6. 리버스 프록시 설정 (<code>Caddyfile</code>)</h2>
-<p>Caddy는 Nginx와 달리 별도의 Let's Encrypt 연동 스크립트(Certbot) 설정 없이도, <strong>도메인명을 적어주는 것만으로 80/443 포트 자동 매칭 및 SSL 인증서 무중단 갱신을 자체적으로 수행</strong>합니다.</p>
+<h2 id="6-환경변수-및-비밀값">🔐 6. 환경변수 및 비밀값</h2>
+<p>프론트엔드에 노출해도 되는 값과 서버 전용 비밀값을 분리합니다. TourAPI 서비스 키, Gemini API 키, DB URL은 반드시 서버 환경변수로만 보관합니다.</p>
+<div class="table-wrap"><table><thead><tr><th>이름</th><th>위치</th><th>설명</th></tr></thead><tbody><tr><td><code>NEXT_PUBLIC_API_BASE_URL</code></td><td>Vercel</td><td>프론트엔드에서 호출할 FastAPI HTTPS URL</td></tr><tr><td><code>DATABASE_URL</code></td><td>VPS <code>.env</code></td><td>Managed PostgreSQL 연결 문자열. 가능하면 pooled connection 사용</td></tr><tr><td><code>REDIS_URL</code></td><td>VPS <code>.env</code></td><td>내부 Redis URL</td></tr><tr><td><code>TOURAPI_SERVICE_KEY</code></td><td>VPS/GitHub Actions secrets</td><td>TourAPI 배치 수집 키</td></tr><tr><td><code>GEMINI_API_KEY</code></td><td>VPS <code>.env</code></td><td>LLM 협상/요약 API 키</td></tr><tr><td><code>KAKAO_REST_API_KEY</code></td><td>VPS <code>.env</code></td><td>서버 측 지도/장소 보강이 필요할 때 사용</td></tr></tbody></table></div>
+<hr>
+<h2 id="7-리버스-프록시-설정-caddyfile">🔒 7. 리버스 프록시 설정 (<code>Caddyfile</code>)</h2>
+<p>Caddy는 API 도메인의 HTTPS 종료와 FastAPI 컨테이너 프록시만 담당합니다. DB와 Redis 포트는 외부에 열지 않습니다.</p>
 <pre><code class="language-caddy"># 아래 도메인은 구매한 도메인이나 서브도메인으로 변경하여 매칭합니다.
 api.avatrip.co.kr {
-    # FastAPI 컨테이너의 8000 포트로 트래픽을 프록시 전달
     reverse_proxy web:8000
 
-    # 보안 헤더 기본 설정
     header {
-        # Clickjacking 방어
         X-Frame-Options "DENY"
-        # XSS 공격 방어
-        X-XSS-Protection "1; mode=block"
-        # MIME Type 스니핑 방지
         X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
     }
 }</code></pre>
 <hr>
-<h2 id="7-배포-가동-및-유지보수-워크플로우">🚀 7. 배포 가동 및 유지보수 워크플로우</h2>
-<h3 id="7-1-서비스-가동">7-1. 서비스 가동</h3>
-<p>모든 소스코드가 서버에 복사된 후, docker-compose.yml 파일이 있는 디렉토리에서 아래 명령어로 통합 컨테이너들을 백그라운드 구동합니다.</p>
-<pre><code class="language-bash"># 백그라운드로 전체 서비스 가동 및 빌드
+<h2 id="8-배포-및-운영-워크플로우">🚀 8. 배포 및 운영 워크플로우</h2>
+<h3 id="8-1-초기-셋업">8-1. 초기 셋업</h3>
+<ol>
+<li>Managed PostgreSQL에 PostGIS extension을 활성화합니다.</li>
+<li>장소/이미지/혼잡도/방문자 통계/협상 세션 테이블을 마이그레이션합니다.</li>
+<li>TourAPI 제주 seed batch를 실행해 핵심 장소 데이터를 채웁니다.</li>
+<li>Lightsail VPS에 API/Worker/Redis/Caddy를 배포합니다.</li>
+<li>Vercel 환경변수에 API URL을 연결하고 PWA를 배포합니다.</li>
+</ol>
+<h3 id="8-2-서비스-가동">8-2. 서비스 가동</h3>
+<pre><code class="language-bash">docker compose pull
 docker compose up -d --build
 
-# 현재 가동 중인 컨테이너 상태 모니터링
 docker compose ps</code></pre>
-<h3 id="7-2-모니터링-및-트러블슈팅">7-2. 모니터링 및 트러블슈팅</h3>
-<pre><code class="language-bash"># 1. FastAPI 게이트웨이 API 웹 서버 로그 확인
-docker compose logs -f web
+<h3 id="8-3-모니터링">8-3. 모니터링</h3>
+<pre><code class="language-bash">docker compose logs -f web
 
-# 2. LangGraph 에이전트 연산 Celery 워커 실시간 로그 모니터링 (디버깅 핵심)
 docker compose logs -f worker
 
-# 3. 데이터베이스 상태 모니터링
-docker compose logs -f db</code></pre>
+docker compose logs -f redis</code></pre>
+<h3 id="8-4-운영-체크리스트">8-4. 운영 체크리스트</h3>
+<ul>
+<li><strong>DB 백업</strong>: Managed DB 자동 백업 또는 일별 dump를 설정합니다.</li>
+<li><strong>API 상태 확인</strong>: <code>/health</code>, <code>/ready</code> 엔드포인트를 분리합니다.</li>
+<li><strong>작업 실패 재시도</strong>: TourAPI 수집 및 LLM 협상 작업에 retry/backoff를 둡니다.</li>
+<li><strong>Rate Limit</strong>: 초대 링크, 협상 시작, 장소 상세 보강 API에 사용자/IP 기준 제한을 둡니다.</li>
+<li><strong>로그 분리</strong>: API access log, worker job log, batch ingest log를 분리해 장애 원인을 추적합니다.</li>
+</ul>
+<hr>
+<h2 id="9-확장-로드맵">📈 9. 확장 로드맵</h2>
+<div class="table-wrap"><table><thead><tr><th>단계</th><th>구성</th><th>전환 기준</th></tr></thead><tbody><tr><td>MVP</td><td>Vercel + Managed PostGIS + Lightsail API/Worker/Redis</td><td>공모전 데모, 소규모 테스트</td></tr><tr><td>Beta</td><td>Worker 전용 VPS 분리, Redis managed 검토</td><td>동시 협상 작업 증가, Redis 장애 영향 감소 필요</td></tr><tr><td>Production</td><td>API 컨테이너 서비스/ECS/Fly/Render 이전, Worker autoscale</td><td>상시 사용자, 작업 큐 적체, 배포 자동화 필요</td></tr><tr><td>Data Scale</td><td>이미지/PDF 오브젝트 스토리지, 장소 데이터 증분 업데이트</td><td>다지역 확장, 공유 결과물 저장 필요</td></tr></tbody></table></div>
         </div>
       </article>
     </main>
+    <script type="module" src="../assets/mermaid-render.js"></script>
   </body>
 </html>
