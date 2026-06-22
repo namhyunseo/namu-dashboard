@@ -1,249 +1,138 @@
-(function renderRouteHub() {
-  const mount = document.querySelector("#route-list");
-  const groups = window.NAMU_LINK_GROUPS || [];
+(function () {
+  const routes = window.NAMU_ROUTES || [];
+  const order = window.NAMU_CATEGORY_ORDER || [];
 
-  if (!mount) return;
+  const mount = document.querySelector("#routes");
+  const empty = document.querySelector("#empty");
+  const search = document.querySelector("#search");
+  const toggle = document.querySelector(".toggle");
 
-  const fragment = document.createDocumentFragment();
+  let view = "all"; // "all" | "public"
+  let query = "";
 
-  groups.forEach((group) => {
-    const groupElement = document.createElement("article");
-    groupElement.className = "route-group";
+  function categories(list) {
+    const seen = [...new Set(list.map((r) => r.category))];
+    return seen.sort((a, b) => {
+      const ia = order.indexOf(a);
+      const ib = order.indexOf(b);
+      return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+    });
+  }
 
-    const groupHeader = document.createElement("header");
-    groupHeader.className = "route-group-header";
+  function matches(route) {
+    if (view === "public" && route.visibility !== "public") return false;
+    if (!query) return true;
+    const hay = `${route.title} ${route.desc} ${route.category}`.toLowerCase();
+    return hay.includes(query);
+  }
 
-    const titleWrap = document.createElement("div");
+  function card(route) {
+    const ready = route.url && route.url !== "#";
+    const el = document.createElement(ready ? "a" : "div");
+    el.className = "card" + (ready ? "" : " is-disabled");
 
-    const title = document.createElement("h2");
-    title.textContent = group.title;
-
-    const description = document.createElement("p");
-    description.textContent = group.description;
-
-    titleWrap.append(title, description);
-    groupHeader.append(titleWrap);
-    groupElement.append(groupHeader);
-
-    const links = document.createElement("div");
-    links.className = "route-items";
-
-    group.links.forEach((item) => {
-      const isReady = item.url && item.url !== "#";
-      const link = document.createElement(isReady ? "a" : "div");
-      link.className = isReady ? "route-card route-row" : "route-card route-row is-disabled";
-      link.dataset.label = item.label;
-      link.dataset.description = item.description;
-      link.dataset.url = isReady ? item.url : "";
-      link.dataset.status = item.status || (isReady ? "이동" : "준비 중");
-
-      if (isReady) {
-        link.href = item.url;
-        if (/^https?:\/\//.test(item.url)) {
-          link.target = "_blank";
-          link.rel = "noreferrer";
-        }
-      } else {
-        link.setAttribute("aria-disabled", "true");
+    if (ready) {
+      el.href = route.url;
+      if (/^https?:\/\//.test(route.url)) {
+        el.target = "_blank";
+        el.rel = "noreferrer";
       }
-
-      const text = document.createElement("div");
-      text.className = "route-card-text";
-
-      const icon = document.createElement("span");
-      icon.className = "route-icon";
-      icon.textContent = getRouteIcon(group.id, item.url);
-
-      const label = document.createElement("span");
-      label.className = "route-label";
-      label.textContent = item.label;
-
-      const desc = document.createElement("span");
-      desc.className = "route-description";
-      desc.textContent = item.description;
-
-      text.append(label, desc);
-
-      const meta = document.createElement("span");
-      meta.className = isReady ? "route-meta" : "route-meta pending";
-      meta.textContent = item.shortcut || item.status || (isReady ? "이동" : "준비 중");
-
-      const action = document.createElement("span");
-      action.className = isReady ? "route-action" : "route-action pending";
-      action.textContent = item.status || (isReady ? "이동" : "준비 중");
-
-      link.append(icon, text, meta, action);
-      links.append(link);
-    });
-
-    groupElement.append(links);
-    fragment.append(groupElement);
-  });
-
-  mount.append(fragment);
-})();
-
-(function renderWorkspaceTree() {
-  const mount = document.querySelector("#workspace-tree");
-  const groups = window.NAMU_LINK_GROUPS || [];
-
-  if (!mount) return;
-
-  const fragment = document.createDocumentFragment();
-
-  groups.forEach((group) => {
-    const groupElement = document.createElement("section");
-    groupElement.className = "tree-group";
-
-    const title = document.createElement("h2");
-    title.className = "tree-group-title";
-    title.textContent = group.title.toLowerCase();
-    groupElement.append(title);
-
-    const list = document.createElement("div");
-    list.className = "tree-items";
-
-    group.links.forEach((item) => {
-      const isReady = item.url && item.url !== "#";
-      const route = document.createElement(isReady ? "a" : "span");
-      route.className = isReady ? "tree-item" : "tree-item is-disabled";
-      route.dataset.label = item.label;
-      route.dataset.description = item.description;
-      route.dataset.url = isReady ? item.url : "";
-      route.dataset.status = item.status || (isReady ? "이동" : "준비 중");
-
-      if (isReady) route.href = item.url;
-
-      const icon = document.createElement("span");
-      icon.className = "tree-icon";
-      icon.textContent = getRouteIcon(group.id, item.url);
-
-      const name = document.createElement("span");
-      name.textContent = `${item.title}.link`;
-
-      route.append(icon, name);
-      list.append(route);
-    });
-
-    groupElement.append(list);
-    fragment.append(groupElement);
-  });
-
-  mount.append(fragment);
-})();
-
-(function setupRouteInspector() {
-  const title = document.querySelector("#inspector-current-title");
-  const description = document.querySelector("#inspector-current-desc");
-  const action = document.querySelector("#inspector-current-link");
-  const routes = document.querySelectorAll(".route-row, .tree-item");
-
-  if (!title || !description || !action || !routes.length) return;
-
-  function updateInspector(route) {
-    title.textContent = route.dataset.label || "선택 없음";
-    description.textContent = route.dataset.description || "";
-
-    if (route.dataset.url) {
-      action.href = route.dataset.url;
-      action.textContent = "open route";
-      action.classList.remove("is-disabled");
-      action.removeAttribute("aria-disabled");
     } else {
-      action.removeAttribute("href");
-      action.textContent = route.dataset.status || "pending";
-      action.classList.add("is-disabled");
-      action.setAttribute("aria-disabled", "true");
+      el.setAttribute("aria-disabled", "true");
     }
-  }
 
-  routes.forEach((route) => {
-    route.addEventListener("pointerenter", () => updateInspector(route));
-    route.addEventListener("focus", () => updateInspector(route));
-  });
-})();
+    const title = document.createElement("span");
+    title.className = "card__title";
+    title.textContent = route.title;
 
-(function setupCommandPalette() {
-  const groups = window.NAMU_LINK_GROUPS || [];
-  const palette = document.querySelector("#command-palette");
-  const openButton = document.querySelector("#command-open");
-  const input = document.querySelector("#command-search");
-  const results = document.querySelector("#command-results");
+    const desc = document.createElement("span");
+    desc.className = "card__desc";
+    desc.textContent = route.desc || "";
 
-  if (!palette || !openButton || !input || !results) return;
+    const meta = document.createElement("span");
+    meta.className = "card__meta";
 
-  const routes = groups.flatMap((group) =>
-    group.links.map((item) => ({
-      ...item,
-      group: group.title,
-      isReady: item.url && item.url !== "#",
-    })),
-  );
-
-  function renderResults(query = "") {
-    const keyword = query.trim().toLowerCase();
-    const visibleRoutes = routes.filter((route) => {
-      if (!keyword) return true;
-      return [route.title, route.label, route.description, route.group]
-        .join(" ")
-        .toLowerCase()
-        .includes(keyword);
-    });
-
-    results.replaceChildren();
-
-    visibleRoutes.forEach((route) => {
-      const item = document.createElement(route.isReady ? "a" : "div");
-      item.className = route.isReady ? "command-item" : "command-item is-disabled";
-
-      if (route.isReady) {
-        item.href = route.url;
-      } else {
-        item.setAttribute("aria-disabled", "true");
-      }
-
-      const text = document.createElement("span");
-      text.className = "command-item-text";
-      text.innerHTML = `<strong>${route.label}</strong><small>${route.group} · ${route.description}</small>`;
-
-      const status = document.createElement("span");
-      status.className = route.isReady ? "command-status" : "command-status pending";
-      status.textContent = route.status || "이동";
-
-      item.append(text, status);
-      results.append(item);
-    });
-  }
-
-  function openPalette() {
-    palette.hidden = false;
-    renderResults();
-    requestAnimationFrame(() => input.focus());
-  }
-
-  function closePalette() {
-    palette.hidden = true;
-    input.value = "";
-  }
-
-  openButton.addEventListener("click", openPalette);
-  input.addEventListener("input", () => renderResults(input.value));
-  palette.addEventListener("click", (event) => {
-    if (event.target.matches("[data-command-close]")) closePalette();
-  });
-  document.addEventListener("keydown", (event) => {
-    const isCommandSearch = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
-    if (isCommandSearch) {
-      event.preventDefault();
-      openPalette();
+    if (route.visibility === "private") {
+      const lock = document.createElement("span");
+      lock.className = "tag tag--private";
+      lock.textContent = "개인";
+      meta.append(lock);
     }
-    if (event.key === "Escape" && !palette.hidden) closePalette();
-  });
-})();
+    const status = document.createElement("span");
+    status.className = "tag tag--status";
+    status.dataset.status = route.status || "";
+    status.textContent = route.status || "";
+    meta.append(status);
 
-function getRouteIcon(groupId, url) {
-  if (url === "#") return "○";
-  if (groupId === "main") return "◇";
-  if (groupId === "client") return "◆";
-  return "△";
-}
+    el.append(title, desc, meta);
+    return el;
+  }
+
+  function render() {
+    const visible = routes.filter(matches);
+    mount.innerHTML = "";
+
+    if (!visible.length) {
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+
+    categories(visible).forEach((cat) => {
+      const items = visible.filter((r) => r.category === cat);
+      if (!items.length) return;
+
+      const section = document.createElement("section");
+      section.className = "group";
+
+      const head = document.createElement("h2");
+      head.className = "group__title";
+      head.textContent = cat;
+
+      const count = document.createElement("span");
+      count.className = "group__count";
+      count.textContent = items.length;
+      head.append(count);
+
+      const grid = document.createElement("div");
+      grid.className = "grid";
+      items.forEach((r) => grid.append(card(r)));
+
+      section.append(head, grid);
+      mount.append(section);
+    });
+  }
+
+  // 검색
+  search.addEventListener("input", (e) => {
+    query = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  // "/" 로 검색 포커스, Esc 로 초기화
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== search) {
+      e.preventDefault();
+      search.focus();
+    }
+    if (e.key === "Escape" && document.activeElement === search) {
+      search.value = "";
+      query = "";
+      search.blur();
+      render();
+    }
+  });
+
+  // 공개 범위 토글
+  toggle.addEventListener("click", (e) => {
+    const btn = e.target.closest(".toggle__btn");
+    if (!btn) return;
+    view = btn.dataset.view;
+    toggle.querySelectorAll(".toggle__btn").forEach((b) =>
+      b.classList.toggle("is-active", b === btn)
+    );
+    render();
+  });
+
+  render();
+})();

@@ -3,124 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="블로그, 포트폴리오, 개발 프로젝트, 디자인 시안으로 이동하는 개인 메인 허브입니다."
-    />
+    <meta name="description" content="내가 굴리는 사이트와 프로젝트로 가는 개인 런처." />
     <title>Namu Dashboard</title>
-    <link rel="stylesheet" href="./src/styles/base.css" />
-    <link rel="stylesheet" href="./src/styles/layout.css" />
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="stylesheet" href="./src/styles/base.css?v=3" />
+    <link rel="stylesheet" href="./src/styles/layout.css?v=3" />
   </head>
-  <body class="dev-home">
-    <main class="workspace-shell">
-      <header class="workspace-topbar">
-        <div class="window-controls" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="masthead__intro">
+          <p class="eyebrow">personal launcher</p>
+          <h1>Namu Dashboard</h1>
+          <p class="lede">내가 굴리는 사이트와 프로젝트로 가는 한 장.</p>
         </div>
-        <span class="workspace-path">namu-dashboard / main</span>
-        <button id="command-open" class="command-trigger" type="button">
-          <span>command</span>
-          <kbd>⌘K</kbd>
-        </button>
+
+        <div class="controls">
+          <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="검색…  ( / )"
+            autocomplete="off"
+            aria-label="링크 검색"
+          />
+          <div class="toggle" role="group" aria-label="공개 범위">
+            <button type="button" class="toggle__btn is-active" data-view="all">전체</button>
+            <button type="button" class="toggle__btn" data-view="public">공개</button>
+          </div>
+        </div>
       </header>
 
-      <div class="workspace-frame">
-        <aside class="workspace-sidebar" aria-label="워크스페이스 탐색">
-          <a class="workspace-brand" href="./">
-            <span>ND</span>
-            <strong>Namu Dashboard</strong>
-          </a>
-          <nav id="workspace-tree" class="workspace-tree" aria-label="경로 트리"></nav>
-        </aside>
+      <div id="routes" class="routes"></div>
+      <p id="empty" class="empty" hidden>일치하는 링크가 없습니다.</p>
 
-        <section class="workspace-main" aria-labelledby="page-title">
-          <div class="editor-tabs" aria-label="열린 탭">
-            <span class="editor-tab is-active">NAMU.md</span>
-            <span class="editor-tab">routes.json</span>
-            <a class="editor-tab" href="./projects/">projects/</a>
-          </div>
-
-          <section class="editor-pane">
-            <ol class="editor-gutter" aria-hidden="true">
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-            </ol>
-
-            <div class="editor-content">
-              <p class="eyebrow">personal route hub</p>
-              <h1 id="page-title">Namu Dashboard</h1>
-
-              <div class="workspace-metrics" aria-label="대시보드 상태">
-                <div><span>deploy</span><strong>pages</strong></div>
-                <div><span>project</span><strong>ava-trip</strong></div>
-                <div><span>render</span><strong>static</strong></div>
-              </div>
-
-              <div id="route-list" class="route-list"></div>
-            </div>
-          </section>
-        </section>
-
-        <aside class="inspector-panel" aria-label="선택 경로 정보">
-          <section class="inspector-section">
-            <span class="inspector-label">selected</span>
-            <h2 id="inspector-current-title">개발 프로젝트</h2>
-            <p id="inspector-current-desc">
-              프로젝트별 자료와 공유 페이지를 선택하는 목록
-            </p>
-            <a id="inspector-current-link" class="inspector-action" href="./projects/">
-              open route
-            </a>
-          </section>
-
-          <section class="inspector-section">
-            <span class="inspector-label">active docs</span>
-            <ul class="inspector-list">
-              <li>AVA-Trip</li>
-              <li>TourAPI Places Preview</li>
-              <li>GitHub Pages</li>
-            </ul>
-          </section>
-        </aside>
-      </div>
-
-      <footer class="workspace-statusbar" aria-label="상태">
-        <span>main</span>
+      <footer class="footer">
         <span>github-pages</span>
-        <span>static-html</span>
-        <span>ready</span>
+        <span>static</span>
+        <span>namhyunseo</span>
       </footer>
     </main>
 
-    <div id="command-palette" class="command-palette" hidden>
-      <div class="command-backdrop" data-command-close></div>
-      <section class="command-dialog" aria-label="빠른 이동 검색">
-        <input
-          id="command-search"
-          class="command-search"
-          type="search"
-          placeholder="이동할 페이지 검색"
-          autocomplete="off"
-        />
-        <div id="command-results" class="command-results"></div>
-      </section>
-    </div>
-
-    <script src="./src/data/links.js?v=home-5"></script>
-    <script src="./src/scripts/app.js?v=home-5"></script>
+    <script src="./src/data/routes.js?v=3"></script>
+    <script src="./src/scripts/app.js?v=3"></script>
   </body>
 </html>
